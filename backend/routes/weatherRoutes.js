@@ -115,4 +115,22 @@ router.get("/simulate", async (req, res) => {
   }
 });
 
+router.delete('/delete/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedWeather = await Weather.findByIdAndDelete(id);
+
+    if (!deletedWeather) {
+      return res.status(404).json({ error: "Weather data not found" });
+    }
+
+    res.status(200).json({ message: "Weather data deleted successfully!" });
+  } catch (error) {
+    res.status(500).json({ error: "Error deleting weather data" });
+  }
+});
+
+
+
 module.exports = router;

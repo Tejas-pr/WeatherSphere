@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { BiSearch, BiCurrentLocation } from "react-icons/bi";
 
 const Input = ({ setQuery, setUnits, addWeatherDataToDb, fetchWeatherDataFromDb }) => {
@@ -24,34 +25,46 @@ const Input = ({ setQuery, setUnits, addWeatherDataToDb, fetchWeatherDataFromDb 
           className="cursor-pointer ease-out transition hover:scale-125"
         />
       </div>
-      <div className="flex flex-row w-1/4 items-center justify-center">
-        <button
-          className="text-2xl font-medium transition ease-out hover:scale-125"
+      <div className="flex flex-row w-1/4 items-center justify-center gap-2">
+        <motion.button
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className="text-2xl font-medium"
           onClick={() => setUnits("metric")}
         >
           °C
-        </button>
+        </motion.button>
         <p className="text-2xl font-medium mx-1">|</p>
-        <button
-          className="text-2xl font-medium transition ease-out hover:scale-125"
+        <motion.button
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className="text-2xl font-medium"
           onClick={() => setUnits("imperial")}
         >
           °F
-        </button>
+        </motion.button>
         <p className="text-2xl font-medium mx-1">{" "} | {" "}</p>
-        <button
-          className="text-2xl font-medium transition ease-out hover:scale-125"
+        <motion.button
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className="text-2xl font-medium"
           onClick={addWeatherDataToDb}
         >
           ADD 
-        </button>
+        </motion.button>
         <p className="text-2xl font-medium mx-1">|</p>
-        <button
-          className="text-2xl font-medium transition ease-out hover:scale-125"
+        <motion.button
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className="text-2xl font-medium"
           onClick={fetchWeatherDataFromDb}
         >
           FETCH
-        </button>
+        </motion.button>
       </div>
     </div>
   );

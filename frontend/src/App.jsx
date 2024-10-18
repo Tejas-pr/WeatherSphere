@@ -6,15 +6,16 @@ import TempAndDetails from "./components/TempAndDetails";
 import Forecast from "./components/Forecast";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import WeatherPopup from "./components/WeatherCard"; 
+import WeatherPopup from "./components/WeatherCard";
+import { motion } from "framer-motion";
 
 const App = () => {
   const [query, setQuery] = useState({ q: "Bengaluru" });
   const [units, setUnits] = useState("metric");
   const [weather, setWeather] = useState(null);
   const [forecast, setForecast] = useState(null);
-  const [weatherDataList, setWeatherDataList] = useState([]); 
-  const [showPopup, setShowPopup] = useState(false); 
+  const [weatherDataList, setWeatherDataList] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -34,7 +35,7 @@ const App = () => {
       console.log("here");
       console.log("here");
       const data = await response.json();
-      console.log(data)
+      console.log(data);
       const { lat, lon } = data;
 
       const forecastResponse = await fetch(
@@ -91,24 +92,24 @@ const App = () => {
       console.error("Weather data is not available");
       return;
     }
-  
+
     const weatherData = {
       city: weather.name,
       country: weather.country,
       lat: weather.lat,
       lon: weather.lon,
-      date: new Date().toISOString(), 
+      date: new Date().toISOString(),
       summary: {
         avg_temp: weather.avgTemp,
-        max_temp: weather.temp_max, 
-        min_temp: weather.temp_min, 
+        max_temp: weather.temp_max,
+        min_temp: weather.temp_min,
         avg_humidity: weather.avgHumidity,
         avg_wind_speed: weather.avgWindSpeed,
         dominant_condition: weather.dominantCondition,
-        icon: `http://openweathermap.org/img/wn/${weather.icon}@2x.png` 
+        icon: `http://openweathermap.org/img/wn/${weather.icon}@2x.png`,
       },
     };
-  
+
     try {
       const response = await fetch("http://localhost:3000/api/weather/add", {
         method: "POST",
@@ -117,19 +118,47 @@ const App = () => {
         },
         body: JSON.stringify(weatherData),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Failed to add weather data");
       }
-  
+
       const result = await response.json();
-      console.log("Weather data added:", result);
+      // console.log("Weather data added:", result);
+      toast.success("Weather data added successfully!");
     } catch (error) {
       console.error("Error adding weather data:", error.message);
     }
   };
-  
+
+  const deleteWeatherData = async (id) => {
+    // Now accepts the _id
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/weather/delete/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete weather data");
+      }
+
+      const result = await response.json();
+      toast.success("Weather data deleted successfully!");
+
+      // Optionally, remove the deleted item from the weatherDataList state to avoid re-fetching
+      setWeatherDataList((prevData) =>
+        prevData.filter((data) => data._id !== id)
+      );
+    } catch (error) {
+      console.error("Error deleting weather data:", error.message);
+      toast.error(`Error deleting weather data: ${error.message}`);
+    }
+  };
 
   const fetchWeatherDataFromDb = async () => {
     try {
@@ -140,7 +169,7 @@ const App = () => {
 
       const data = await response.json();
       setWeatherDataList(data);
-      setShowPopup(true); 
+      setShowPopup(true);
     } catch (error) {
       toast.error(`Error fetching saved weather data: ${error.message}`);
     }
@@ -151,9 +180,12 @@ const App = () => {
   }, [query, units]);
 
   const handleAddWeatherData = () => {
-    addWeatherData(); 
+    addWeatherData();
   };
-  
+
+  const handleDeleteWeatherData = (index) => {
+    deleteWeatherData(index);
+  };
 
   return (
     <div
@@ -180,10 +212,12 @@ const App = () => {
       )}
       <ToastContainer autoClose={1000} hideProgressBar={true} theme="dark" />
       <WeatherPopup
+        handleDeleteWeatherData={handleDeleteWeatherData} // Pass this function
         weatherDataList={weatherDataList}
         showPopup={showPopup}
         setShowPopup={setShowPopup}
       />
+      ;
     </div>
   );
 };
