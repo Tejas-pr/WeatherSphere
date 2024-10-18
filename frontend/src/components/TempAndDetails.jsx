@@ -5,6 +5,7 @@ import { FiWind } from "react-icons/fi";
 import { GiSunrise, GiSunset } from "react-icons/gi";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import { TbAlarmAverage } from "react-icons/tb";
+import { BiArrowFromBottom } from "react-icons/bi";
 
 const TempAndDetails = ({
   weather: {
@@ -21,6 +22,7 @@ const TempAndDetails = ({
     avgTemp,       
     avgHumidity,    
     avgWindSpeed,  
+    dominantCondition
   },
   units
 }) => {
@@ -87,6 +89,12 @@ const TempAndDetails = ({
       title: "Avg Wind Speed", 
       value: `${avgWindSpeed.toFixed()} ${units === "metric" ? "Km/h" : "m/s"}`, 
     },
+    {
+      id: 8,
+      Icon: BiArrowFromBottom ,
+      title: "Dominant Condition", 
+      value: `${dominantCondition}`,
+    },
   ];
   return (
     <>
@@ -114,9 +122,9 @@ const TempAndDetails = ({
           </div>
         </div>
         {/* harizontal */}
-        <div className="flex flex-row justify-center items-center space-x-10 text-sm py-3">
+        <div className="grid grid-cols-4 gap-4text-sm py-3 mt-5 ">
           {horizontalDetails.map(({ id, Icon, title, value }) => (
-            <div key={id} className="flex flex-row items-center">
+            <div key={id} className="flex flex-row items-center p-4">
               <Icon size={30} />
               <p className="font-light ml-1">
                 {`${title} :`}

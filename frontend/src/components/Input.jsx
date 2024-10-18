@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BiSearch, BiCurrentLocation } from "react-icons/bi";
 
-const Input = ({ setQuery, setUnits }) => {
+const Input = ({ setQuery, setUnits, addWeatherDataToDb, fetchWeatherDataFromDb }) => {
   const [city, setCity] = useState("");
 
   const handleSearch = () => {
@@ -37,6 +37,20 @@ const Input = ({ setQuery, setUnits }) => {
           onClick={() => setUnits("imperial")}
         >
           °F
+        </button>
+        <p className="text-2xl font-medium mx-1">{" "} | {" "}</p>
+        <button
+          className="text-2xl font-medium transition ease-out hover:scale-125"
+          onClick={addWeatherDataToDb}
+        >
+          ADD 
+        </button>
+        <p className="text-2xl font-medium mx-1">|</p>
+        <button
+          className="text-2xl font-medium transition ease-out hover:scale-125"
+          onClick={fetchWeatherDataFromDb}
+        >
+          FETCH
         </button>
       </div>
     </div>
