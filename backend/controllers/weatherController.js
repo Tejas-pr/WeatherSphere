@@ -1,5 +1,8 @@
 const Weather = require("../models/Weather");
-const fetchWeatherData = require("../services/weatherService");
+const {
+  fetchWeatherData,
+  fetchForecastWeatherData,
+} = require("../services/weatherService");
 const { DateTime } = require("luxon");
 
 const formatLocalTime = (
@@ -45,9 +48,52 @@ const formatCurrentWeather = (data) => {
     formattedLocalTime,
     dt,
     timezone,
-    lat, // Latitude
-    lon, // Longitude
+    lat,
+    lon,
   };
+};
+
+const formatForecastWeather = (secs, offset, data) => {
+  const hourly = data
+    .filter((f) => f.dt > secs)
+    .slice(0, 5)
+    .map((f) => ({
+      temp: f.main.temp,
+      title: formatLocalTime(f.dt, offset, "hh:mm a"),
+      icon: iconUrlFromCode(f.weather[0].icon),
+      date: f.dt_txt,
+    }));
+
+  const daily = data
+    .filter((f) => f.dt_txt.slice(-8) === "00:00:00")
+    .map((f) => ({
+      temp: f.main.temp,
+      title: formatLocalTime(f.dt, offset, "cccc"),
+      icon: iconUrlFromCode(f.weather[0].icon),
+      date: f.dt_txt,
+    }));
+
+  return { hourly, daily };
+};
+
+
+const getForcastWeatherData = async (city, unit) => {
+  const weatherData = await fetchWeatherData(city, unit);
+
+  const {
+    coord: { lat, lon },
+    timezone,
+  } = weatherData;
+
+  const forecastData = await fetchForecastWeatherData(city, unit);
+
+  const formattedForecast = formatForecastWeather(
+    weatherData.dt,
+    timezone,
+    forecastData.list
+  );
+
+  return { ...formatCurrentWeather(weatherData), ...formattedForecast };
 };
 
 const simulateWeatherDataForMetros = async (city, unit) => {
@@ -56,7 +102,8 @@ const simulateWeatherDataForMetros = async (city, unit) => {
 
     const formattedWeather = formatCurrentWeather(data);
 
-    console.log("Formatted Weather Data (Initial):", formattedWeather);
+    // console.log("Formatted Weather Data (Initial):", formattedWeather);
+    return formattedWeather
   } catch (error) {
     console.error(`Error fetching weather data for ${city} (Initial):`, error);
   }
@@ -67,14 +114,15 @@ const simulateWeatherDataForMetros = async (city, unit) => {
 
       const formattedWeather = formatCurrentWeather(data);
 
-      console.log("Formatted Weather Data (Interval):", formattedWeather);
+      // console.log("Formatted Weather Data (Interval):", formattedWeather);
+      return formattedWeather
     } catch (error) {
       console.error(
         `Error fetching weather data for ${city} (Interval):`,
         error
       );
     }
-  }, 5000);
+  }, 30000);
 };
 
 const saveWeatherData = async (city, unit) => {
@@ -121,4 +169,5 @@ const saveWeatherData = async (city, unit) => {
 module.exports = {
   simulateWeatherDataForMetros,
   saveWeatherData,
+  getForcastWeatherData
 };

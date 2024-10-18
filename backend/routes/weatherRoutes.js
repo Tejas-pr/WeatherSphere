@@ -1,40 +1,45 @@
+// weatherRoutes.js
 const express = require("express");
-const {
-  simulateWeatherDataForMetros,
-  saveWeatherData,
-} = require("../controllers/weatherController");
+const { simulateWeatherDataForMetros, saveWeatherData, getForcastWeatherData } = require("../controllers/weatherController"); // Adjust the path as needed
+
 const router = express.Router();
 
-// Route to get saved weather data
+// Route to get current and forecast weather data
 router.get("/weather", async (req, res) => {
+  const { city, unit } = req.query; 
   try {
-    const weatherData = await Weather.find();
-    res.status(200).json(weatherData);
+    const weatherData = await simulateWeatherDataForMetros(city, unit);
+    // console.log(weatherData)
+
+    res.json(weatherData); 
   } catch (error) {
-    res.status(500).json({ error: "Error fetching weather data" });
+    res.status(500).json({ error: "Failed to fetch weather data." });
   }
 });
 
-// Route to simulate weather data for metros (with city as a query parameter)
-router.post("/simulate-weather", async (req, res) => {
-  const { city, unit } = req.body; // Get the city from query parameters
+
+// Route to save weather data
+router.post("/weather/save", async (req, res) => {
+  const { city, unit } = req.body; // Get city and unit from request body
   try {
-    await simulateWeatherDataForMetros(city, unit); // Pass the city to the function
-    res.status(200).json({ message: `Simulation started for ${city}` });
+    await saveWeatherData(city, unit);
+    res.status(201).json({ message: "Weather data saved successfully." });
   } catch (error) {
-    res.status(500).json({ error: `Error starting simulation for ${city}` });
+    console.error(`Error saving weather data: ${error}`);
+    res.status(500).json({ error: "Failed to save weather data" });
   }
 });
 
-// Route to save weather data manually (with city as a query parameter)
-router.post("/save-weather", async (req, res) => {
-  const { city, unit } = req.body; // Use request body to pass city and unit
+// Route to simulate weather data fetching (if needed)
+router.get("/weather/simulate", async (req, res) => {
+  const { city, unit } = req.query; // Get city and unit from query parameters
   try {
-    await saveWeatherData(city, unit); // Pass the city and unit to the function
-    res.status(200).json({ message: `Weather data saved for ${city}` });
+    await simulateWeatherDataForMetros(city, unit);
+    res.status(200).json({ message: "Weather data simulation started." });
   } catch (error) {
-    res.status(500).json({ error: `Error saving weather data for ${city}` });
+    console.error(`Error simulating weather data: ${error}`);
+    res.status(500).json({ error: "Failed to simulate weather data" });
   }
 });
 
-module.exports = router; // Export the router
+module.exports = router;
