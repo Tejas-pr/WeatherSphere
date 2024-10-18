@@ -4,6 +4,7 @@ import { FaThermometerEmpty } from "react-icons/fa";
 import { FiWind } from "react-icons/fi";
 import { GiSunrise, GiSunset } from "react-icons/gi";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
+import { TbAlarmAverage } from "react-icons/tb";
 
 const TempAndDetails = ({
   weather: {
@@ -17,6 +18,9 @@ const TempAndDetails = ({
     speed,
     humidity,
     feels_like,
+    avgTemp,       
+    avgHumidity,    
+    avgWindSpeed,  
   },
   units
 }) => {
@@ -64,6 +68,24 @@ const TempAndDetails = ({
       Icon: MdKeyboardArrowDown,
       title: "Low",
       value: `${temp_min.toFixed()}°`,
+    },
+    {
+      id: 5,
+      Icon: TbAlarmAverage,
+      title: "Avg Temp", // Update the title
+      value: `${avgTemp.toFixed()}°`, // Display average temperature
+    },
+    {
+      id: 6,
+      Icon: BiSolidDropletHalf,
+      title: "Avg Humidity", 
+      value: `${avgHumidity.toFixed()}%`,
+    },
+    {
+      id: 7,
+      Icon: FiWind, 
+      title: "Avg Wind Speed", 
+      value: `${avgWindSpeed.toFixed()} ${units === "metric" ? "Km/h" : "m/s"}`, 
     },
   ];
   return (

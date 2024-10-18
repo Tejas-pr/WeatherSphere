@@ -11,7 +11,7 @@ const App = () => {
   const [query, setQuery] = useState({ q: "Bengaluru" });
   const [units, setUnits] = useState("metric");
   const [weather, setWeather] = useState(null);
-  const [forecast, setForecast] = useState(null); // State for forecast data
+  const [forecast, setForecast] = useState(null);
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -30,26 +30,44 @@ const App = () => {
       }
 
       const data = await response.json();
-      console.log("Full weather data response:", data);
 
-      const { lat, lon } = data; // Destructure lat and lon
-      console.log("Latitude:", lat, "Longitude:", lon);
+      const { lat, lon } = data;
 
-      // Fetch forecast using lat and lon
       const forecastResponse = await fetch(
         `http://localhost:3000/api/weather/forecast?lat=${lat}&lon=${lon}&unit=${units}`
       );
       const forecastData = await forecastResponse.json();
-      console.log("Forecast data:", forecastData);
 
-      setWeather(data); // Set the weather data
-      setForecast(forecastData.list); // Set the forecast data
+      // console.log("HERE");
+      // console.log(forecastData);
+      // console.log(forecastData.list);
+
+      // Calculate average values
+      const totalTemp = forecastData.list.reduce(
+        (acc, item) => acc + item.main.temp,
+        0
+      );
+      const avgTemp = totalTemp / forecastData.list.length;
+
+      const totalHumidity = forecastData.list.reduce(
+        (acc, item) => acc + item.main.humidity,
+        0
+      );
+      const avgHumidity = totalHumidity / forecastData.list.length;
+
+      const totalWindSpeed = forecastData.list.reduce(
+        (acc, item) => acc + item.wind.speed,
+        0
+      );
+      const avgWindSpeed = totalWindSpeed / forecastData.list.length;
+
+      setWeather({ ...data, avgTemp, avgHumidity, avgWindSpeed });
+      setForecast(forecastData.list);
     } catch (error) {
       toast.error(`Error fetching weather data: ${error.message}`);
     }
   };
 
-  // Call getWeather only when query or units change
   useEffect(() => {
     getWeather();
   }, [query, units]);
@@ -59,15 +77,16 @@ const App = () => {
       className={`mx-auto py-5 px-32 bg-gradient-to-br from-cyan-600 to-blue-700`}
     >
       <TopButton setQuery={setQuery} />
-      <Input setUnits={setUnits} setQuery={setQuery} />
+      <Input query={query} setUnits={setUnits} setQuery={setQuery} />{" "}
+      {/* Pass query here */}
       {weather && (
         <>
           <TimeAndLocation weather={weather} />
           <TempAndDetails weather={weather} units={units} />
-          {forecast ? ( // Check if forecast data exists
+          {forecast ? (
             <Forecast title="3 hour step forecast" data={forecast} />
           ) : (
-            <p>Loading forecast...</p> // Show loading if forecast data is not ready
+            <p>Loading forecast...</p>
           )}
         </>
       )}
