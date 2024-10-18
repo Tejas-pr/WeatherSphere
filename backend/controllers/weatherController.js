@@ -102,7 +102,6 @@ const simulateWeatherDataForMetros = async (city, unit) => {
 
     const formattedWeather = formatCurrentWeather(data);
 
-    // console.log("Formatted Weather Data (Initial):", formattedWeather);
     return formattedWeather
   } catch (error) {
     console.error(`Error fetching weather data for ${city} (Initial):`, error);
@@ -114,7 +113,6 @@ const simulateWeatherDataForMetros = async (city, unit) => {
 
       const formattedWeather = formatCurrentWeather(data);
 
-      // console.log("Formatted Weather Data (Interval):", formattedWeather);
       return formattedWeather
     } catch (error) {
       console.error(
