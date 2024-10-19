@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 mongoose
-  .connect("mongodb+srv://admin:ChGKB5onRYRW3zba@cluster0.6zeco.mongodb.net/Weather-Sphere")
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected successfully");
 

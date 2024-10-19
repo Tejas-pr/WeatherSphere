@@ -191,7 +191,7 @@ const App = () => {
     console.log("Alert data:", alertData);
 
     // You can send the data to the backend to store it for alert monitoring
-    fetch("http://localhost:3000/api/alerts", {
+    fetch("http://localhost:3000/api/weather/alerts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -201,9 +201,11 @@ const App = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log("Alert set successfully:", data);
+        toast.success("Alert set successfully!");
       })
       .catch((error) => {
         console.error("Error setting alert:", error);
+        toast.error(`Error setting alert: ${error.message}`);
       });
   };
 

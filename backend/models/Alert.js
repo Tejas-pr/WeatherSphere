@@ -1,5 +1,4 @@
-
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const alertSchema = new mongoose.Schema({
   email: { type: String, required: true },
@@ -7,6 +6,6 @@ const alertSchema = new mongoose.Schema({
   threshold: { type: Number, required: true },
 });
 
-const Alert = mongoose.model('Alert', alertSchema);
+const Alert = mongoose.model("Alert", alertSchema);
 
 module.exports = Alert;
