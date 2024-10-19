@@ -204,6 +204,7 @@ const App = () => {
       .then((response) => response.json())
       .then((data) => {
         toast.success("Alert set successfully!");
+        toast.success("Please wait for email notification.");
       })
       .catch((error) => {
         toast.error(`Try again !!`);

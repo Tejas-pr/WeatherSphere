@@ -4,17 +4,68 @@ Develop a real-time data processing system to monitor weather conditions and pro
 
 ## Features
 
-- Continuous retrieval of weather data for major Indian metros (Delhi, Mumbai, Chennai, Bangalore, Kolkata, Hyderabad).
-- Conversion of temperature values from Kelvin to Celsius.
-- Daily weather summaries with aggregates:
-  - Average temperature
-  - Maximum temperature
-  - Minimum temperature
-  - Dominant weather condition
-- User-configurable alerting thresholds for temperature or specific weather conditions.
-- Email notifications for triggered alerts.
-- Visualizations for daily weather summaries and historical trends.
-- Support for additional weather parameters (humidity, wind speed, etc.).
+- **Real-Time Weather Monitoring**:  
+  Continuous retrieval of up-to-date weather data for major Indian metropolitan cities:
+
+  - **Bengaluru**
+  - **Delhi**
+  - **Mumbai**
+  - **Chennai**
+  - **Kolkata**
+  - **Hyderabad**
+
+- **Temperature Conversion**:  
+  Automatic conversion of temperature values from **Kelvin** to **Celsius** for user-friendly display.
+
+- **Daily Weather Summaries**:  
+  Generate comprehensive daily summaries with weather aggregates, including:
+
+  - **Average Temperature**: Overall average temperature for the day.
+  - **Maximum Temperature**: Highest recorded temperature of the day.
+  - **Minimum Temperature**: Lowest recorded temperature of the day.
+  - **Dominant Weather Condition**: The most frequent weather condition throughout the day (e.g., Clear, Cloudy, Rainy).
+
+- **Customizable Alerts**:  
+  Set your own alerting thresholds based on:
+
+  - Temperature limits (e.g., receive an alert if the temperature exceeds 40°C).
+  - Specific weather conditions (e.g., alerts for storms or rain).
+
+- **Email Notifications**:  
+  Receive real-time **email notifications** when any of your weather thresholds are triggered. Stay informed wherever you are.
+
+- **Data Visualizations**:  
+  Visualize weather trends and insights with graphical representations:
+
+  - **Daily Weather Summaries**
+  - **Historical Weather Trends** (track changes over days, weeks, or months).
+
+- **Extended Weather Metrics**:  
+  In addition to temperature, the system also supports monitoring and displaying other weather parameters, such as:
+  - **Humidity**
+  - **Wind Speed**
+  - **Precipitation**
+  - **Visibility**
+
+## Prerequisites
+
+#### Frontend:
+
+[react](https://react.dev/learn),
+[react-icons](https://react-icons.github.io/react-icons/),
+[react-toastify](https://www.npmjs.com/package/react-toastify),
+[luxon](https://www.npmjs.com/package/luxon),
+[framer-motion](https://www.framer.com/motion/)
+
+#### Backend:
+
+[nodemon](https://www.npmjs.com/package/nodemon),
+[express](https://expressjs.com/),
+[dotenv](https://www.npmjs.com/package/dotenv),
+[mongoose](https://www.npmjs.com/package/mongoose),
+[axios](https://axios-http.com/docs/intro),
+[cors](https://www.npmjs.com/package/cors),
+[nodemailer](https://www.npmjs.com/package/nodemailer)
 
 ## Design Choices
 
@@ -41,7 +92,7 @@ git clone https://github.com/Tejas-pr/WeatherSphere.git
 ```bash
 cd WeatherSphere/frontend
 npm install
-npm install react-toastify react-icons react-dom luxon framer-motion
+npm install react-toastify react-icons luxon framer-motion
 npm run dev
 ```
 
@@ -51,7 +102,7 @@ npm run dev
 
 ```bash
 cd WeatherSphere/backend
-npm i nodemon express dotenv mongoose nodemailer axios cors
+npm install nodemon express dotenv mongoose nodemailer axios cors
 ```
 
 2. Create a .env file and add:
@@ -82,6 +133,96 @@ npm run dev
 
 You can easily test all API endpoints using this [Postman collection](https://www.postman.com/science-participant-14299000/workspace/sharing-postman/collection/29097026-c6eaa31a-0f1d-4fd9-8543-188bf6af352c?action=share&creator=29097026). The collection contains pre-configured test cases, which you can run or fork directly in your browser without any local setup. Just ensure that your backend server is running properly.
 
+## Postman Manual Testing
+
+You can manually test the API endpoints using Postman by following these steps:
+
+1. **Download and Install Postman**: If you haven't already, download Postman from [Postman's official website](https://www.postman.com/downloads/).
+
+2. **Set Up Environment Variables**: Ensure you set the required environment variables in Postman for the requests to work correctly. You can set them in the "Environment" section of Postman. Here are the variables to include:
+   - `WEATHER_API_KEY`: Your OpenWeatherMap API key.
+   - `GMAIL_PASSKEY`: Your Gmail passkey.
+   - `GMAIL_USER`: Your Gmail username.
+
+### Example Test Cases
+
+Here are some example test cases to guide your manual testing:
+
+1. **Get Current Weather Data**
+   - **Method**: GET
+   - **Endpoint**: `http://localhost:3000/api/weather?city=Bengaluru&unit=metric`
+   - **Description**: Fetches current weather data for Bengaluru.
+   - **Expected Response**: 200 OK with the current weather data in JSON format.
+
+2. **Get Daily Weather Forecast**
+   - **Method**: GET
+   - **Endpoint**: `http://localhost:3000/api/weather/forecast?lat=12.9716&lon=77.5946&unit=metric`
+   - **Description**: Retrieves the daily weather forecast for Bengaluru based on latitude and longitude.
+   - **Expected Response**: 200 OK with the forecast data in JSON format.
+
+3. **Add Weather Data**
+   - **Method**: POST
+   - **Endpoint**: `http://localhost:3000/api/weather/add`
+   - **Body** (JSON):
+     ```json
+     {
+       "city": "Bengaluru",
+       "country": "India",
+       "lat": 12.9716,
+       "lon": 77.5946,
+       "date": "2024-10-20",
+       "summary": {
+         "avg_temp": 25,
+         "max_temp": 30,
+         "min_temp": 20,
+         "avg_humidity": 60,
+         "avg_wind_speed": 10,
+         "dominant_condition": "Clear",
+         "icon": "clear.png"
+       }
+     }
+     ```
+   - **Description**: Saves weather data for Bengaluru.
+   - **Expected Response**: 201 Created, with a message confirming the data has been saved.
+
+4. **Fetch Weather Data**
+   - **Method**: GET
+   - **Endpoint**: `http://localhost:3000/api/weather/fetch`
+   - **Description**: Retrieves all saved weather data.
+   - **Expected Response**: 200 OK with an array of weather data in JSON format.
+
+5. **Simulate Weather Data**
+   - **Method**: GET
+   - **Endpoint**: `http://localhost:3000/api/weather/simulate?city=Bengaluru&unit=metric`
+   - **Description**: Starts the simulation of weather data for London.
+   - **Expected Response**: 200 OK with a message indicating that simulation has started.
+
+6. **Delete Weather Data**
+   - **Method**: DELETE
+   - **Endpoint**: `http://localhost:3000/api/weather/delete/:id`
+   - **Description**: Deletes weather data by the specified ID. Replace `:id` with the actual ID of the weather data in DB to delete.
+   - **Expected Response**: 200 OK with a message confirming that the data has been deleted.
+
+7. **Set Weather Alert**
+   - **Method**: POST
+   - **Endpoint**: `http://localhost:3000/api/weather/alerts`
+   - **Body** (JSON):
+     ```json
+     {
+       "email": "user@example.com",
+       "city": "Bengaluru",
+       "threshold": 40
+     }
+     ```
+   - **Description**: Sets a weather alert for Bengaluru.
+   - **Expected Response**: 200 OK with a message confirming that the alert has been set.
+
+### Steps to Proceed:
+
+1. Ensure your backend server is running.
+2. Set the required environment variables in Postman.
+3. Execute the test cases above and verify that the responses match the expected outcomes.
+
 ### Steps to Proceed:
 
 1. Backend Setup: Start your backend server, making sure that all dependencies are installed and the correct port is configured in Postman.
@@ -93,13 +234,12 @@ You can easily test all API endpoints using this [Postman collection](https://ww
 - GMAIL_USER: Your Gmail username.
   Once these steps are complete, you’ll be able to test all the routes, including weather data simulation, forecast retrieval, data storage, and alerts.
 
-## Artifacts to be Submitted
-<!-- 
+<!-- ## Artifacts to be Submitted -->
+<!--
 - Docker setup instructions (if applicable).
 - Vercel link for the frontend (to be added later). -->
 
-## Contact
-
+##
+[Problem-Statement](./frontend/Problem_statement.md)    
 Thank You! 👋  
 tejas.teju02@gmail.com  
-+91 9538632743
