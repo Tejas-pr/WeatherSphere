@@ -3,13 +3,12 @@ const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const weatherRoutes = require("./routes/weatherRoutes"); // Import the weatherRoutes
+const weatherRoutes = require("./routes/weatherRoutes");
 
 dotenv.config();
 app.use(cors());
 app.use(express.json());
 
-// DB connection and Server start
 mongoose
   .connect("mongodb+srv://admin:ChGKB5onRYRW3zba@cluster0.6zeco.mongodb.net/Weather-Sphere")
   .then(() => {
@@ -25,5 +24,4 @@ mongoose
     process.exit(1);
   });
 
-// Route for weather-related endpoints
-app.use("/api/weather", weatherRoutes); // Use the routes without './'
+app.use("/api/weather", weatherRoutes);

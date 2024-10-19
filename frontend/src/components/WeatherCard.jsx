@@ -45,7 +45,18 @@ const WeatherPopup = ({
                 <p>Average Humidity: {data.summary.avg_humidity} %</p>
                 <p>Average Wind Speed: {data.summary.avg_wind_speed} m/s</p>
                 <p>Dominant Condition: {data.summary.dominant_condition}</p>
-                <p>Date: {new Date(data.date).toLocaleDateString()}</p>
+                <p>
+                  Date:{" "}
+                  {new Date(data.date).toLocaleString(undefined, {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })}
+                </p>
+
                 <motion.button
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}

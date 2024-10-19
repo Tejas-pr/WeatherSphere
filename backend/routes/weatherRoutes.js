@@ -3,8 +3,9 @@ const {
   simulateWeatherDataForMetros,
   saveWeatherData,
   getForecastWeatherData,
-} = require("../controllers/weatherController"); // Adjust the path as needed
-const Weather = require("../models/Weather"); // Corrected import for the Weather model
+} = require("../controllers/weatherController");
+const Weather = require("../models/Weather");
+const Alert = require("../models/Alert");
 
 const router = express.Router();
 
@@ -112,6 +113,19 @@ router.delete("/delete/:id", async (req, res) => {
     res.status(200).json({ message: "Weather data deleted successfully!" });
   } catch (error) {
     res.status(500).json({ error: "Error deleting weather data" });
+  }
+});
+
+router.post("/alerts", async (req, res) => {
+  const { email, city, threshold } = req.body;
+
+  try {
+    const alert = new Alert({ email, city, threshold });
+    await alert.save(); // Save the alert to the database
+    res.json({ message: "Alert set successfully" });
+  } catch (error) {
+    console.error("Error setting alert:", error);
+    res.status(500).json({ message: "Failed to set alert" });
   }
 });
 

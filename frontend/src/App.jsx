@@ -7,7 +7,7 @@ import Forecast from "./components/Forecast";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import WeatherPopup from "./components/WeatherCard";
-import { motion } from "framer-motion";
+import AlertModal from "./components/Alert";
 
 const App = () => {
   const [query, setQuery] = useState({ q: "Bengaluru" });
@@ -16,6 +16,7 @@ const App = () => {
   const [forecast, setForecast] = useState(null);
   const [weatherDataList, setWeatherDataList] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
+  const [showAlertModal, setShowAlertModal] = useState(false);
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -147,7 +148,6 @@ const App = () => {
       const result = await response.json();
       toast.success("Weather data deleted successfully!");
 
-      // Optionally, remove the deleted item from the weatherDataList state to avoid re-fetching
       setWeatherDataList((prevData) =>
         prevData.filter((data) => data._id !== id)
       );
@@ -165,6 +165,7 @@ const App = () => {
       }
 
       const data = await response.json();
+      console.log(data);
       setWeatherDataList(data);
       setShowPopup(true);
     } catch (error) {
@@ -184,6 +185,28 @@ const App = () => {
     deleteWeatherData(index);
   };
 
+  const handleSetAlert = (alertData) => {
+    // Here you will send the alert data (email, city, threshold) to the backend
+    // for example:
+    console.log("Alert data:", alertData);
+
+    // You can send the data to the backend to store it for alert monitoring
+    fetch("http://localhost:3000/api/alerts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(alertData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Alert set successfully:", data);
+      })
+      .catch((error) => {
+        console.error("Error setting alert:", error);
+      });
+  };
+
   return (
     <div className="mx-auto py-5 px-32 bg-gradient-to-br">
       <TopButton setQuery={setQuery} />
@@ -194,6 +217,7 @@ const App = () => {
         addWeatherDataToDb={handleAddWeatherData}
         fetchWeatherDataFromDb={fetchWeatherDataFromDb}
       />
+      <button onClick={() => setShowAlertModal(true)}>Set Alert</button>
       {weather ? (
         <>
           <TimeAndLocation weather={weather} />
@@ -213,6 +237,15 @@ const App = () => {
         weatherDataList={weatherDataList}
         showPopup={showPopup}
         setShowPopup={setShowPopup}
+      />
+      {/* Rest of your app */}
+      
+      
+      {/* Pass the modal state and functions */}
+      <AlertModal
+        isOpen={showAlertModal}
+        onClose={() => setShowAlertModal(false)}
+        onSubmit={handleSetAlert}
       />
     </div>
   );

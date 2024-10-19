@@ -1,15 +1,40 @@
+const nodemailer = require("nodemailer");
 const Weather = require("../models/Weather");
+const Alert = require("../models/Alert");
 const {
   fetchWeatherData,
   fetchForecastWeatherData,
 } = require("../services/weatherService");
 const { DateTime } = require("luxon");
+require('dotenv').config();
 
-const formatLocalTime = (
-  secs,
-  offset,
-  format = "cccc, dd LLL yyyy' | Local time: 'hh:mm a"
-) =>
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  secure: true,
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASSKEY,
+  },
+});
+
+const sendEmail = async (to, subject, text, htmlContent) => {
+  const mailOptions = {
+    from: process.env.GMAIL_USER,
+    to,
+    subject,
+    text,
+    html: htmlContent,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully to", to);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
+
+const formatLocalTime = (secs, offset, format = "cccc, dd LLL yyyy' | Local time: 'hh:mm a") =>
   DateTime.fromSeconds(secs, { zone: "utc" })
     .plus({ seconds: offset })
     .toFormat(format);
@@ -98,9 +123,7 @@ const getForcastWeatherData = async (city, unit) => {
 const simulateWeatherDataForMetros = async (city, unit) => {
   try {
     const data = await fetchWeatherData(city, unit);
-
     const formattedWeather = formatCurrentWeather(data);
-
     return formattedWeather;
   } catch (error) {
     console.error(`Error fetching weather data for ${city} (Initial):`, error);
@@ -109,15 +132,10 @@ const simulateWeatherDataForMetros = async (city, unit) => {
   setInterval(async () => {
     try {
       const data = await fetchWeatherData(city, unit);
-
       const formattedWeather = formatCurrentWeather(data);
-
       return formattedWeather;
     } catch (error) {
-      console.error(
-        `Error fetching weather data for ${city} (Interval):`,
-        error
-      );
+      console.error(`Error fetching weather data for ${city} (Interval):`, error);
     }
   }, 30000);
 };
@@ -125,7 +143,6 @@ const simulateWeatherDataForMetros = async (city, unit) => {
 const saveWeatherData = async (city, unit) => {
   try {
     const data = await fetchWeatherData(city, unit);
-
     const formattedWeather = formatCurrentWeather(data);
 
     const {
@@ -162,8 +179,65 @@ const saveWeatherData = async (city, unit) => {
   }
 };
 
+let lastAlertTime = {};
+
+const checkAlerts = async () => {
+  try {
+    const alerts = await Alert.find();
+    if (!Array.isArray(alerts)) {
+      console.error("Expected alerts to be an array.");
+      return;
+    }
+
+    for (let alert of alerts) {
+      const { city, threshold, email, _id } = alert; // Include the alert ID
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/weather?city=${city}`);
+        const weatherData = await response.json();
+
+        const now = Date.now();
+        const alertKey = `${city}-${threshold}`;
+        const lastSent = lastAlertTime[alertKey];
+
+        if (!lastSent || now - lastSent > 3600000) {
+          const currentTempCelsius = (weatherData.temp - 273.15).toFixed(2); // Convert Kelvin to Celsius and format
+
+          if (currentTempCelsius > threshold) {
+            const message = `
+              <h1>Weather Alert for ${city}</h1>
+              <p>The temperature has exceeded your set threshold!</p>
+              <p>Current Temperature: <strong>${currentTempCelsius}°C</strong></p>
+              <p>Threshold Temperature: <strong>${threshold}°C</strong></p>
+              <p>Please take the necessary precautions.</p>
+              <p>Alert is deleted!!</p>
+            `;
+
+            await sendEmail(
+              email,
+              `Weather Alert for ${city}`,
+              "Your threshold temperature is reached:",
+              message
+            );
+
+            lastAlertTime[alertKey] = now;
+            await Alert.deleteOne({ _id }); // Remove the alert from the database
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching weather data for alert:", error);
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching alerts from database:", error);
+  }
+};
+
+setInterval(checkAlerts, 60000);
+
 module.exports = {
   simulateWeatherDataForMetros,
   saveWeatherData,
   getForcastWeatherData,
+  sendEmail,
 };
