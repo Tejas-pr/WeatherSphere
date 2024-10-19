@@ -24,11 +24,17 @@ const Input = ({
           placeholder="Search by city..."
           className="text-gray-600 text-xl font-light p-2 w-1/3 shadow-xl capitalize focus:outline-none rounded-full placeholder:lowercase"
         />
-        <BiSearch
-          size={30}
-          onClick={handleSearch}
-          className="cursor-pointer ease-out transition hover:scale-125"
-        />
+        <motion.div
+          whileHover={{ scale: 1.2 }}
+          whileTap={{ scale: 0.9 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        >
+          <BiSearch
+            size={30}
+            onClick={handleSearch}
+            className="cursor-pointer"
+          />
+        </motion.div>
       </div>
       <div className="flex flex-row w-1/4 items-center justify-center gap-2">
         <motion.button

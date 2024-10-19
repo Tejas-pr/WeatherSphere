@@ -8,6 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import WeatherPopup from "./components/WeatherCard";
 import AlertModal from "./components/Alert";
+import { motion } from "framer-motion";
 
 const App = () => {
   const [query, setQuery] = useState({ q: "Bengaluru" });
@@ -17,6 +18,7 @@ const App = () => {
   const [weatherDataList, setWeatherDataList] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
+
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -30,71 +32,72 @@ const App = () => {
       const response = await fetch(
         `http://localhost:3000/api/weather?city=${cityName}&unit=${units}`
       );
-      console.log("Fetching the weather data in interval...");
-
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
       const { lat, lon } = data;
 
-      const forecastResponse = await fetch(
-        `http://localhost:3000/api/weather/forecast?lat=${lat}&lon=${lon}&unit=${units}`
-      );
-      const forecastData = await forecastResponse.json();
-
-      const totalTemp = forecastData.list.reduce(
-        (acc, item) => acc + item.main.temp,
-        0
-      );
-      const avgTemp = totalTemp / forecastData.list.length;
-
-      const totalHumidity = forecastData.list.reduce(
-        (acc, item) => acc + item.main.humidity,
-        0
-      );
-      const avgHumidity = totalHumidity / forecastData.list.length;
-
-      const totalWindSpeed = forecastData.list.reduce(
-        (acc, item) => acc + item.wind.speed,
-        0
-      );
-      const avgWindSpeed = totalWindSpeed / forecastData.list.length;
-
-      const weatherConditions = forecastData.list.map(
-        (item) => item.weather[0].main
-      );
-      const conditionCounts = {};
-
-      weatherConditions.forEach((condition) => {
-        conditionCounts[condition] = (conditionCounts[condition] || 0) + 1;
-      });
-
-      const dominantCondition = Object.keys(conditionCounts).reduce((a, b) =>
-        conditionCounts[a] > conditionCounts[b] ? a : b
-      );
-
-      setWeather({
-        ...data,
-        avgTemp,
-        avgHumidity,
-        avgWindSpeed,
-        dominantCondition,
-      });
-      setForecast(forecastData.list);
+      try{
+        const forecastResponse = await fetch(
+          `http://localhost:3000/api/weather/forecast?lat=${lat}&lon=${lon}&unit=${units}`
+        );
+        const forecastData = await forecastResponse.json();
+  
+        const totalTemp = forecastData.list.reduce(
+          (acc, item) => acc + item.main.temp,
+          0
+        );
+        const avgTemp = totalTemp / forecastData.list.length;
+  
+        const totalHumidity = forecastData.list.reduce(
+          (acc, item) => acc + item.main.humidity,
+          0
+        );
+        const avgHumidity = totalHumidity / forecastData.list.length;
+  
+        const totalWindSpeed = forecastData.list.reduce(
+          (acc, item) => acc + item.wind.speed,
+          0
+        );
+        const avgWindSpeed = totalWindSpeed / forecastData.list.length;
+  
+        const weatherConditions = forecastData.list.map(
+          (item) => item.weather[0].main
+        );
+        const conditionCounts = {};
+  
+        weatherConditions.forEach((condition) => {
+          conditionCounts[condition] = (conditionCounts[condition] || 0) + 1;
+        });
+  
+        const dominantCondition = Object.keys(conditionCounts).reduce((a, b) =>
+          conditionCounts[a] > conditionCounts[b] ? a : b
+        );
+  
+        setWeather({
+          ...data,
+          avgTemp,
+          avgHumidity,
+          avgWindSpeed,
+          dominantCondition,
+        });
+        setForecast(forecastData.list);
+      }catch(error){
+        toast.error(`Please re-load to fetch forcast data}`);
+      }
     } catch (error) {
-      toast.error(`Error fetching weather data: ${error.message}`);
+      toast.error(`Please re-load to fetch weather data`);
     }
   };
 
   useEffect(() => {
-    const intervalId = setInterval(getWeather, 10000);
+    const intervalId = setInterval(getWeather, 300000);
     return () => clearInterval(intervalId);
   }, [query, units]);
 
   const addWeatherData = async () => {
     if (!weather) {
-      console.error("Weather data is not available");
       return;
     }
 
@@ -130,16 +133,16 @@ const App = () => {
       }
 
       const result = await response.json();
-      // console.log("Weather data added:", result);
       toast.success("Weather data added successfully!");
     } catch (error) {
-      console.error("Error adding weather data:", error.message);
+      toast.error(`Error in adding weather data`);
     }
   };
 
   const deleteWeatherData = async (id) => {
-    // Now accepts the _id
     try {
+      console.log(id);
+      
       const response = await fetch(
         `http://localhost:3000/api/weather/delete/${id}`,
         {
@@ -159,8 +162,7 @@ const App = () => {
         prevData.filter((data) => data._id !== id)
       );
     } catch (error) {
-      console.error("Error deleting weather data:", error.message);
-      toast.error(`Error deleting weather data: ${error.message}`);
+      toast.error(`Error in deleting weather data`);
     }
   };
 
@@ -172,11 +174,10 @@ const App = () => {
       }
 
       const data = await response.json();
-      console.log(data);
       setWeatherDataList(data);
       setShowPopup(true);
     } catch (error) {
-      toast.error(`Error fetching saved weather data: ${error.message}`);
+      toast.error(`Error in fetching saved weather data`);
     }
   };
 
@@ -193,12 +194,7 @@ const App = () => {
   };
 
   const handleSetAlert = (alertData) => {
-    // Here you will send the alert data (email, city, threshold) to the backend
-    // for example:
-    console.log("Alert data:", alertData);
-
-    // You can send the data to the backend to store it for alert monitoring
-    fetch("http://localhost:3000/api/alerts", {
+    fetch("http://localhost:3000/api/weather/alerts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -207,10 +203,10 @@ const App = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Alert set successfully:", data);
+        toast.success("Alert set successfully!");
       })
       .catch((error) => {
-        console.error("Error setting alert:", error);
+        toast.error(`Try again !!`);
       });
   };
 
@@ -224,7 +220,15 @@ const App = () => {
         addWeatherDataToDb={handleAddWeatherData}
         fetchWeatherDataFromDb={fetchWeatherDataFromDb}
       />
-      <button onClick={() => setShowAlertModal(true)}>Set Alert</button>
+      <motion.button
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        className=" text-white font-bold py-2 px-4 border border-slate-300 rounded-xl"
+        onClick={() => setShowAlertModal(true)}
+      >
+        Set Alert
+      </motion.button>
       {weather ? (
         <>
           <TimeAndLocation weather={weather} />
@@ -240,7 +244,7 @@ const App = () => {
       )}
       <ToastContainer autoClose={1000} hideProgressBar={true} theme="dark" />
       <WeatherPopup
-        handleDeleteWeatherData={handleDeleteWeatherData} // Pass this function
+        handleDeleteWeatherData={handleDeleteWeatherData}
         weatherDataList={weatherDataList}
         showPopup={showPopup}
         setShowPopup={setShowPopup}

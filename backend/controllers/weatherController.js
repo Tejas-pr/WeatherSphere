@@ -93,16 +93,7 @@ const formatForecastWeather = (secs, offset, data) => {
       date: f.dt_txt,
     }));
 
-  const daily = data
-    .filter((f) => f.dt_txt.slice(-8) === "00:00:00")
-    .map((f) => ({
-      temp: f.main.temp,
-      title: formatLocalTime(f.dt, offset, "cccc"),
-      icon: iconUrlFromCode(f.weather[0].icon),
-      date: f.dt_txt,
-    }));
-
-  return { hourly, daily };
+  return { hourly };
 };
 
 const getForcastWeatherData = async (city, unit) => {
@@ -130,7 +121,7 @@ const simulateWeatherDataForMetros = async (city, unit) => {
     const formattedWeather = formatCurrentWeather(data);
     return formattedWeather;
   } catch (error) {
-    console.error(`Error fetching weather data for ${city} (Initial):`, error);
+    console.log("Please reload the page!", error);
   }
 };
 
@@ -202,7 +193,8 @@ const checkAlerts = async () => {
           if (currentTempCelsius > threshold) {
             const message = `
               <h1>Weather Alert for ${city}</h1>
-              <p>The temperature has exceeded your set threshold!</p>
+              <p> </p>
+              <p>The temperature has <strong>exceeded</strong> above your set threshold!</p>
               <p>Current Temperature: <strong>${currentTempCelsius}°C</strong></p>
               <p>Threshold Temperature: <strong>${threshold}°C</strong></p>
               <p>Please take the necessary precautions.</p>

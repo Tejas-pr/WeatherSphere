@@ -75,8 +75,8 @@ const TempAndDetails = ({
     {
       id: 5,
       Icon: TbAlarmAverage,
-      title: "Avg Temp", // Update the title
-      value: `${avgTemp.toFixed()}°`, // Display average temperature
+      title: "Avg Temp", 
+      value: `${avgTemp.toFixed()}°`, 
     },
     {
       id: 6,
