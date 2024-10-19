@@ -3,10 +3,9 @@ import { motion } from "framer-motion";
 
 const Forecast = ({ title, data }) => {
   if (!data || data.length === 0) {
-    return <p>No forecast data available.</p>; // Updated loading check
+    return <p>No forecast data available.</p>; 
   }
 
-  // Use slice to get the first 6 items from the data array
   const forecastData = data.slice(0, 8);
 
   return (

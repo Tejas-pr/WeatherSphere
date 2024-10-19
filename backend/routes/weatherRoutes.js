@@ -9,7 +9,6 @@ const Alert = require("../models/Alert");
 
 const router = express.Router();
 
-// Route to get current weather data
 router.get("/", async (req, res) => {
   const { city, unit } = req.query;
   try {
@@ -21,7 +20,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Route to get weather forecast
 router.get("/forecast", async (req, res) => {
   const { lat, lon, unit } = req.query;
 
@@ -77,7 +75,6 @@ router.post("/add", async (req, res) => {
   }
 });
 
-// Route to fetch saved weather data
 router.get("/fetch", async (req, res) => {
   try {
     const weatherData = await Weather.find();
@@ -88,7 +85,6 @@ router.get("/fetch", async (req, res) => {
   }
 });
 
-// Route to simulate weather data fetching (if needed)
 router.get("/simulate", async (req, res) => {
   const { city, unit } = req.query;
   try {

@@ -30,6 +30,8 @@ const App = () => {
       const response = await fetch(
         `http://localhost:3000/api/weather?city=${cityName}&unit=${units}`
       );
+      console.log("Fetching the weather data in interval...");
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -84,6 +86,11 @@ const App = () => {
       toast.error(`Error fetching weather data: ${error.message}`);
     }
   };
+
+  useEffect(() => {
+    const intervalId = setInterval(getWeather, 10000);
+    return () => clearInterval(intervalId);
+  }, [query, units]);
 
   const addWeatherData = async () => {
     if (!weather) {
@@ -191,7 +198,7 @@ const App = () => {
     console.log("Alert data:", alertData);
 
     // You can send the data to the backend to store it for alert monitoring
-    fetch("http://localhost:3000/api/weather/alerts", {
+    fetch("http://localhost:3000/api/alerts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -201,11 +208,9 @@ const App = () => {
       .then((response) => response.json())
       .then((data) => {
         console.log("Alert set successfully:", data);
-        toast.success("Alert set successfully!");
       })
       .catch((error) => {
         console.error("Error setting alert:", error);
-        toast.error(`Error setting alert: ${error.message}`);
       });
   };
 
@@ -240,10 +245,6 @@ const App = () => {
         showPopup={showPopup}
         setShowPopup={setShowPopup}
       />
-      {/* Rest of your app */}
-      
-      
-      {/* Pass the modal state and functions */}
       <AlertModal
         isOpen={showAlertModal}
         onClose={() => setShowAlertModal(false)}

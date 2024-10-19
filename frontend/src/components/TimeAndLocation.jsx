@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 const TimeAndLocation = ({weather: {formattedLocalTime, name, country} }) => {
-  // console.log("Weather Data: ", { formattedLocalTime, name, country });
   return (
     <>
       <motion.div

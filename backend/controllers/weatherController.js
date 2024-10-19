@@ -6,7 +6,7 @@ const {
   fetchForecastWeatherData,
 } = require("../services/weatherService");
 const { DateTime } = require("luxon");
-require('dotenv').config();
+require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -34,7 +34,11 @@ const sendEmail = async (to, subject, text, htmlContent) => {
   }
 };
 
-const formatLocalTime = (secs, offset, format = "cccc, dd LLL yyyy' | Local time: 'hh:mm a") =>
+const formatLocalTime = (
+  secs,
+  offset,
+  format = "cccc, dd LLL yyyy' | Local time: 'hh:mm a"
+) =>
   DateTime.fromSeconds(secs, { zone: "utc" })
     .plus({ seconds: offset })
     .toFormat(format);
@@ -128,16 +132,6 @@ const simulateWeatherDataForMetros = async (city, unit) => {
   } catch (error) {
     console.error(`Error fetching weather data for ${city} (Initial):`, error);
   }
-
-  setInterval(async () => {
-    try {
-      const data = await fetchWeatherData(city, unit);
-      const formattedWeather = formatCurrentWeather(data);
-      return formattedWeather;
-    } catch (error) {
-      console.error(`Error fetching weather data for ${city} (Interval):`, error);
-    }
-  }, 30000);
 };
 
 const saveWeatherData = async (city, unit) => {
@@ -190,10 +184,12 @@ const checkAlerts = async () => {
     }
 
     for (let alert of alerts) {
-      const { city, threshold, email, _id } = alert; // Include the alert ID
+      const { city, threshold, email, _id } = alert;
 
       try {
-        const response = await fetch(`http://localhost:3000/api/weather?city=${city}`);
+        const response = await fetch(
+          `http://localhost:3000/api/weather?city=${city}`
+        );
         const weatherData = await response.json();
 
         const now = Date.now();
@@ -201,7 +197,7 @@ const checkAlerts = async () => {
         const lastSent = lastAlertTime[alertKey];
 
         if (!lastSent || now - lastSent > 3600000) {
-          const currentTempCelsius = (weatherData.temp - 273.15).toFixed(2); // Convert Kelvin to Celsius and format
+          const currentTempCelsius = (weatherData.temp - 273.15).toFixed(2);
 
           if (currentTempCelsius > threshold) {
             const message = `
@@ -221,7 +217,7 @@ const checkAlerts = async () => {
             );
 
             lastAlertTime[alertKey] = now;
-            await Alert.deleteOne({ _id }); // Remove the alert from the database
+            await Alert.deleteOne({ _id });
           }
         }
       } catch (error) {
