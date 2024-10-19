@@ -34,11 +34,11 @@ Develop a real-time data processing system to monitor weather conditions and pro
 - **Email Notifications**:  
   Receive real-time **email notifications** when any of your weather thresholds are triggered. Stay informed wherever you are.
 
-- **Data Visualizations**:  
+<!-- - **Data Visualizations**:  
   Visualize weather trends and insights with graphical representations:
 
   - **Daily Weather Summaries**
-  - **Historical Weather Trends** (track changes over days, weeks, or months).
+  - **Historical Weather Trends** (track changes over days, weeks, or months). -->
 
 - **Extended Weather Metrics**:  
   In addition to temperature, the system also supports monitoring and displaying other weather parameters, such as:
@@ -47,25 +47,24 @@ Develop a real-time data processing system to monitor weather conditions and pro
   - **Precipitation**
   - **Visibility**
 
-## Prerequisites
+## Pre-requisites
 
 #### Frontend:
 
-[react](https://react.dev/learn),
-[react-icons](https://react-icons.github.io/react-icons/),
-[react-toastify](https://www.npmjs.com/package/react-toastify),
-[luxon](https://www.npmjs.com/package/luxon),
-[framer-motion](https://www.framer.com/motion/)
+[React](https://react.dev/learn) [React-icons](https://react-icons.github.io/react-icons/)
+[React-toastify](https://www.npmjs.com/package/react-toastify)
+[Luxon](https://www.npmjs.com/package/luxon)
+[Framer-motion](https://www.framer.com/motion/)
 
 #### Backend:
 
-[nodemon](https://www.npmjs.com/package/nodemon),
-[express](https://expressjs.com/),
-[dotenv](https://www.npmjs.com/package/dotenv),
-[mongoose](https://www.npmjs.com/package/mongoose),
-[axios](https://axios-http.com/docs/intro),
-[cors](https://www.npmjs.com/package/cors),
-[nodemailer](https://www.npmjs.com/package/nodemailer)
+[Nodemon](https://www.npmjs.com/package/nodemon)
+[Express](https://expressjs.com/)
+[Dotenv](https://www.npmjs.com/package/dotenv)
+[Mongoose](https://www.npmjs.com/package/mongoose)
+[Axios](https://axios-http.com/docs/intro)
+[Cors](https://www.npmjs.com/package/cors)
+[Nodemailer](https://www.npmjs.com/package/nodemailer)
 
 ## Design Choices
 
