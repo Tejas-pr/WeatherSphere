@@ -76,7 +76,6 @@ const formatForecastWeather = (secs, offset, data) => {
   return { hourly, daily };
 };
 
-
 const getForcastWeatherData = async (city, unit) => {
   const weatherData = await fetchWeatherData(city, unit);
 
@@ -102,7 +101,7 @@ const simulateWeatherDataForMetros = async (city, unit) => {
 
     const formattedWeather = formatCurrentWeather(data);
 
-    return formattedWeather
+    return formattedWeather;
   } catch (error) {
     console.error(`Error fetching weather data for ${city} (Initial):`, error);
   }
@@ -113,7 +112,7 @@ const simulateWeatherDataForMetros = async (city, unit) => {
 
       const formattedWeather = formatCurrentWeather(data);
 
-      return formattedWeather
+      return formattedWeather;
     } catch (error) {
       console.error(
         `Error fetching weather data for ${city} (Interval):`,
@@ -158,7 +157,6 @@ const saveWeatherData = async (city, unit) => {
     };
 
     await Weather.create(weatherSummary);
-    console.log(`Weather summary saved for ${cityName}.`);
   } catch (error) {
     console.error(`Error saving weather data:`, error);
   }
@@ -167,5 +165,5 @@ const saveWeatherData = async (city, unit) => {
 module.exports = {
   simulateWeatherDataForMetros,
   saveWeatherData,
-  getForcastWeatherData
+  getForcastWeatherData,
 };

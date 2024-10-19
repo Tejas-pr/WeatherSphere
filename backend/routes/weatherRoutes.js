@@ -13,7 +13,6 @@ router.get("/", async (req, res) => {
   const { city, unit } = req.query;
   try {
     const weatherData = await simulateWeatherDataForMetros(city, unit);
-    console.log(weatherData);
 
     res.json(weatherData);
   } catch (error) {
@@ -29,8 +28,6 @@ router.get("/forecast", async (req, res) => {
     return res.status(400).json({ error: "Missing required query parameters" });
   }
 
-  console.log(lat, lon, unit);
-
   try {
     const forecastResponse = await fetch(
       `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${unit}&appid=${process.env.WEATHER_API_KEY}`
@@ -41,7 +38,6 @@ router.get("/forecast", async (req, res) => {
     }
 
     const forecastData = await forecastResponse.json();
-    console.log(forecastData);
     res.json(forecastData);
   } catch (error) {
     console.error("Error fetching forecast data:", error.message);
@@ -50,17 +46,7 @@ router.get("/forecast", async (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-  const {
-    city,
-    country,
-    lat,
-    lon,
-    date,
-    summary, 
-  } = req.body;
-
-  console.log("In /add route");
-  console.log("Request body:", req.body); // Log the request body
+  const { city, country, lat, lon, date, summary } = req.body;
 
   if (
     !city ||
@@ -95,8 +81,6 @@ router.get("/fetch", async (req, res) => {
   try {
     const weatherData = await Weather.find();
     res.status(200).send(weatherData);
-    console.log("here is the featched data: ")
-    console.log(weatherData)
   } catch (error) {
     console.error(`Error fetching weather data: ${error}`);
     res.status(500).json({ error: "Failed to fetch weather data" });
@@ -105,7 +89,7 @@ router.get("/fetch", async (req, res) => {
 
 // Route to simulate weather data fetching (if needed)
 router.get("/simulate", async (req, res) => {
-  const { city, unit } = req.query; 
+  const { city, unit } = req.query;
   try {
     await simulateWeatherDataForMetros(city, unit);
     res.status(200).json({ message: "Weather data simulation started." });
@@ -115,7 +99,7 @@ router.get("/simulate", async (req, res) => {
   }
 });
 
-router.delete('/delete/:id', async (req, res) => {
+router.delete("/delete/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -130,7 +114,5 @@ router.delete('/delete/:id', async (req, res) => {
     res.status(500).json({ error: "Error deleting weather data" });
   }
 });
-
-
 
 module.exports = router;

@@ -6,6 +6,7 @@ import { GiSunrise, GiSunset } from "react-icons/gi";
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
 import { TbAlarmAverage } from "react-icons/tb";
 import { BiArrowFromBottom } from "react-icons/bi";
+import { motion } from "framer-motion";
 
 const TempAndDetails = ({
   weather: {
@@ -19,12 +20,12 @@ const TempAndDetails = ({
     speed,
     humidity,
     feels_like,
-    avgTemp,       
-    avgHumidity,    
-    avgWindSpeed,  
-    dominantCondition
+    avgTemp,
+    avgHumidity,
+    avgWindSpeed,
+    dominantCondition,
   },
-  units
+  units,
 }) => {
   const verticalDetails = [
     {
@@ -80,35 +81,74 @@ const TempAndDetails = ({
     {
       id: 6,
       Icon: BiSolidDropletHalf,
-      title: "Avg Humidity", 
+      title: "Avg Humidity",
       value: `${avgHumidity.toFixed()}%`,
     },
     {
       id: 7,
-      Icon: FiWind, 
-      title: "Avg Wind Speed", 
-      value: `${avgWindSpeed.toFixed()} ${units === "metric" ? "Km/h" : "m/s"}`, 
+      Icon: FiWind,
+      title: "Avg Wind Speed",
+      value: `${avgWindSpeed.toFixed()} ${units === "metric" ? "Km/h" : "m/s"}`,
     },
     {
       id: 8,
-      Icon: BiArrowFromBottom ,
-      title: "Dominant Condition", 
+      Icon: BiArrowFromBottom,
+      title: "Dominant Condition",
       value: `${dominantCondition}`,
     },
   ];
   return (
     <>
-      <div>
-        <div className="flex items-center justify-center py-6 text-xl text-cyan-300">
+      <motion.div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            duration: 0.8,
+            delay: 0.8,
+            ease: [0, 0.71, 0.2, 1.01],
+          }}
+          className="flex items-center justify-center py-6 text-xl text-cyan-300"
+        >
           <p className="">{details}</p>
-        </div>
+        </motion.div>
         <div className="flex flex-row justify-between items-center py-3">
-          <img src={icon} alt="Weather icon" />
+          <motion.img
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 0.8,
+              delay: 1,
+              ease: [0, 0.71, 0.2, 1.01],
+            }}
+            src={icon}
+            alt="Weather icon"
+          />
 
-          <p className="text-5xl">{`${temp.toFixed()}`}°</p>
+          <motion.p
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.9,
+              ease: [0, 0.71, 0.2, 1.01],
+            }}
+            className="text-5xl"
+          >
+            {`${temp.toFixed()}`}°
+          </motion.p>
 
           {/* vertical  */}
-          <div className="flex flex-col space-y-3 items-start">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 0.8,
+              delay: 1.1,
+              ease: [0, 0.71, 0.2, 1.01],
+            }}
+            className="flex flex-col space-y-3 items-start"
+          >
             {verticalDetails.map(({ id, Icon, title, value }) => (
               <div
                 key={id}
@@ -119,21 +159,31 @@ const TempAndDetails = ({
                 <span className="font-medium ml-1">{value}</span>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
         {/* harizontal */}
         <div className="grid grid-cols-4 gap-4text-sm py-3 mt-5 ">
           {horizontalDetails.map(({ id, Icon, title, value }) => (
-            <div key={id} className="flex flex-row items-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.8,
+                delay: 1.2,
+                ease: [0, 0.71, 0.2, 1.01],
+              }}
+              key={id}
+              className="flex flex-row items-center p-4"
+            >
               <Icon size={30} />
               <p className="font-light ml-1">
                 {`${title} :`}
                 <span className="font-medium ml-1">{value}</span>
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };

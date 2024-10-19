@@ -32,10 +32,7 @@ const App = () => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      console.log("here");
-      console.log("here");
       const data = await response.json();
-      console.log(data);
       const { lat, lon } = data;
 
       const forecastResponse = await fetch(
@@ -100,11 +97,11 @@ const App = () => {
       lon: weather.lon,
       date: new Date().toISOString(),
       summary: {
-        avg_temp: weather.avgTemp,
+        avg_temp: weather.avgTemp.toFixed(),
         max_temp: weather.temp_max,
         min_temp: weather.temp_min,
-        avg_humidity: weather.avgHumidity,
-        avg_wind_speed: weather.avgWindSpeed,
+        avg_humidity: weather.avgHumidity.toFixed(),
+        avg_wind_speed: weather.avgWindSpeed.toFixed(),
         dominant_condition: weather.dominantCondition,
         icon: `http://openweathermap.org/img/wn/${weather.icon}@2x.png`,
       },
@@ -188,9 +185,7 @@ const App = () => {
   };
 
   return (
-    <div
-      className={`mx-auto py-5 px-32 bg-gradient-to-br from-cyan-600 to-blue-700`}
-    >
+    <div className="mx-auto py-5 px-32 bg-gradient-to-br">
       <TopButton setQuery={setQuery} />
       <Input
         query={query}
@@ -199,7 +194,7 @@ const App = () => {
         addWeatherDataToDb={handleAddWeatherData}
         fetchWeatherDataFromDb={fetchWeatherDataFromDb}
       />
-      {weather && (
+      {weather ? (
         <>
           <TimeAndLocation weather={weather} />
           <TempAndDetails weather={weather} units={units} />
@@ -209,6 +204,8 @@ const App = () => {
             <p>Loading forecast...</p>
           )}
         </>
+      ) : (
+        <p className="flex items-center justify-center m-80">Loading data...</p>
       )}
       <ToastContainer autoClose={1000} hideProgressBar={true} theme="dark" />
       <WeatherPopup
@@ -217,7 +214,6 @@ const App = () => {
         showPopup={showPopup}
         setShowPopup={setShowPopup}
       />
-      ;
     </div>
   );
 };

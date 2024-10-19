@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 const Forecast = ({ title, data }) => {
   if (!data || data.length === 0) {
@@ -9,28 +10,64 @@ const Forecast = ({ title, data }) => {
   const forecastData = data.slice(0, 8);
 
   return (
-    <div>
+    <motion.div
+    initial={{ opacity: 0, scale: 0.5 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{
+      duration: 0.8,
+      delay: 1.25,
+      ease: [0, 0.71, 0.2, 1.01]
+    }}
+    >
       <div className="flex items-center justify-start mt-6">
         <p className="font-medium uppercase">{title}</p>
       </div>
       <hr className="my-1" />
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div 
+        
+      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {forecastData.map((d, index) => (
-          <div
+          <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 0.8,
+          delay: 1.3,
+          ease: [0, 0.71, 0.2, 1.01]
+        }}
             key={index}
             className="flex flex-col justify-center items-center"
           >
-            <p className="font-light text-sm">{d.dt_txt}</p>
-            <img
+            <motion.p initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 0.8,
+          delay: 1.35,
+          ease: [0, 0.71, 0.2, 1.01]
+        }} className="font-light text-sm">{d.dt_txt}</motion.p>
+            <motion.img
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.8,
+                delay: 1.4,
+                ease: [0, 0.71, 0.2, 1.01]
+              }}
               src={`http://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png`}
               alt="weather-icon"
               className="w-12 my-1"
             />
-            <p className="font-sma">{`${d.main.temp.toFixed()}°`}</p>
-          </div>
+            <motion.p initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 0.8,
+          delay: 1.45,
+          ease: [0, 0.71, 0.2, 1.01]
+        }}  className="font-sma">{`${d.main.temp.toFixed()}°`}</motion.p>
+          </motion.div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
