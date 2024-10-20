@@ -32,7 +32,7 @@ const App = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/weather?city=${cityName}&unit=${units}`
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather?city=${cityName}&unit=${units}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -42,7 +42,7 @@ const App = () => {
 
       try {
         const forecastResponse = await fetch(
-          `http://localhost:3000/api/weather/forecast?lat=${lat}&lon=${lon}&unit=${units}`
+          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/forecast?lat=${lat}&lon=${lon}&unit=${units}`
         );
         const forecastData = await forecastResponse.json();
         const dailyTemps = {};
@@ -136,7 +136,7 @@ const App = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/api/weather/add", {
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -161,7 +161,7 @@ const App = () => {
       console.log(id);
 
       const response = await fetch(
-        `http://localhost:3000/api/weather/delete/${id}`,
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/delete/${id}`,
         {
           method: "DELETE",
         }
@@ -185,7 +185,7 @@ const App = () => {
 
   const fetchWeatherDataFromDb = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/weather/fetch");
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/fetch`);
       if (!response.ok) {
         throw new Error("Failed to fetch weather data.");
       }
@@ -223,7 +223,7 @@ const App = () => {
       threshold,
     };
 
-    fetch("http://localhost:3000/api/weather/alerts", {
+    fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/alerts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -11,8 +11,6 @@ require("dotenv").config();
 let lastAlertTime = {};
 
 const checkAlerts = async () => {
-  console.log("Checking alerts...");
-  console.log("Trying to send email...")
   try {
     const alerts = await Alert.find();
     if (!Array.isArray(alerts)) {
@@ -25,7 +23,7 @@ const checkAlerts = async () => {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/api/weather?city=${city}`
+          `${process.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather?city=${city}`
         );
         const weatherData = await response.json();
         const now = Date.now();
