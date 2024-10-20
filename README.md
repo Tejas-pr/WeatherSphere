@@ -1,6 +1,8 @@
 # Weather Sphere
 
-Develop a real-time data processing system to monitor weather conditions and provide summarized insights using rollups and aggregates. The system retrieves data from the OpenWeatherMap API.
+Develop a real-time data processing system to monitor weather conditions and provide summarized insights using rollups and aggregates.  
+
+The system retrieves data from the OpenWeatherMap API, utilizing data retrieved from the OpenWeatherMap API. The system calculates daily weather summaries, including average, maximum, and minimum temperatures, as well as identifies the dominant weather condition based on frequency of occurrence. User-configurable alerting thresholds were implemented to monitor temperature, triggering alerts for violations and enabling effective monitoring. The system retrieves weather data at configurable intervals, accurately parses responses, and includes temperature conversion functionalities. Additionally, I extended the system to support other weather parameters such as humidity and wind speed, and integrated functionalities for weather forecasts, enhancing the overall capability and depth of insights provided. Comprehensive test cases were developed to ensure the functionality, correctness, and efficiency of the system across various weather scenarios.
 
 ## Features
 
@@ -36,8 +38,8 @@ Develop a real-time data processing system to monitor weather conditions and pro
   We've optimized the alert-setting process using **Zod** for validation, ensuring that your input is correct and reliable.
 
 - **Visual Graph for Average Temperature**
-  - **Visual Representation**: The system includes a visually engaging graph that displays the average temperature trends over time using **Chart.js**. This allows users to easily interpret weather patterns and temperature fluctuations at a glance.
 
+  - **Visual Representation**: The system includes a visually engaging graph that displays the average temperature trends over time using **Chart.js**. This allows users to easily interpret weather patterns and temperature fluctuations at a glance.
 
 - **Extended Weather Metrics**:  
   In addition to temperature, the system also supports monitoring and displaying other weather parameters, such as:
@@ -251,8 +253,11 @@ Here are some example test cases to guide your manual testing:
 - Vercel link for the frontend (to be added later). -->
 
 ## DEMO
-- [Problem-Statement](./frontend/Problem_statement.md)  
-- [Video-demo-link](https://www.loom.com/share/821930449369464c912a2d5579aecad6?sid=ac29d21b-a0e4-4e45-a54c-244ed00aca3d)  
+
+- [Problem-Statement](./frontend/Problem_statement.md)
+- [Video-demo-link](https://www.loom.com/share/821930449369464c912a2d5579aecad6?sid=ac29d21b-a0e4-4e45-a54c-244ed00aca3d)
+
 #
+
 Thank You! 👋  
 tejas.teju02@gmail.com
