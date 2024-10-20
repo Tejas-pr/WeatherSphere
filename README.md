@@ -35,6 +35,10 @@ Develop a real-time data processing system to monitor weather conditions and pro
   Receive real-time **email notifications** when any of your weather thresholds are triggered. Stay informed wherever you are.  
   We've optimized the alert-setting process using **Zod** for validation, ensuring that your input is correct and reliable.
 
+- **Visual Graph for Average Temperature**
+  - **Visual Representation**: The system includes a visually engaging graph that displays the average temperature trends over time using **Chart.js**. This allows users to easily interpret weather patterns and temperature fluctuations at a glance.
+
+
 - **Extended Weather Metrics**:  
   In addition to temperature, the system also supports monitoring and displaying other weather parameters, such as:
 
@@ -61,6 +65,7 @@ Develop a real-time data processing system to monitor weather conditions and pro
 [React-toastify](https://www.npmjs.com/package/react-toastify)
 [Luxon](https://www.npmjs.com/package/luxon)
 [Framer-motion](https://www.framer.com/motion/)
+[Chatjs](https://www.chartjs.org/docs/latest/charts/line.html)
 
 #### Backend:
 

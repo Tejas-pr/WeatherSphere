@@ -122,9 +122,11 @@ router.delete("/delete/:id", async (req, res) => {
 });
 
 const alertSchema = z.object({
-  email: z.string().email("Invalid email format"),
-  city: z.string().min(1, "City is required"),
-  threshold: z.number().min(0, "Threshold must be a positive number"),
+  email: z.string().email("Invalid email format").min(1).max(30),
+  city: z.string().min(1).max(30),
+  threshold: z.number().refine((val) => !isNaN(val) && val >= 1 && val <= 100, {
+    message: "Threshold must be a number between 1 and 100",
+  }),
 });
 
 router.post("/alerts", async (req, res) => {
@@ -140,7 +142,11 @@ router.post("/alerts", async (req, res) => {
   }
 
   try {
-    const alert = new Alert({ email, city, threshold });
+    const alert = new Alert({
+      email,
+      city,
+      threshold: validation.data.threshold,
+    });
     await alert.save();
     res.json({ message: "Alert set successfully" });
   } catch (error) {

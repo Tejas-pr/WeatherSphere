@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import logo from '../../public/icon.png'
 
 const TopButton = ({ setQuery }) => {
   const cities = [
@@ -31,6 +32,7 @@ const TopButton = ({ setQuery }) => {
   return (
     <>
       <div className="flex justify-around items-center my-1">
+        <a href=""><img src={logo} alt="Logo" width={70}/></a>
         {cities.map((city) => (
           <motion.button
             whileHover={{ scale: 1.2 }}

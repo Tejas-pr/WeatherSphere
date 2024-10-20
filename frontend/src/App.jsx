@@ -9,6 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import WeatherPopup from "./components/WeatherCard";
 import AlertModal from "./components/Alert";
 import { motion } from "framer-motion";
+import TemperatureLineChart from "./components/TemperatureChart";
+import Footer from "./components/Footer";
 
 const App = () => {
   const [query, setQuery] = useState({ q: "Bengaluru" });
@@ -18,6 +20,7 @@ const App = () => {
   const [weatherDataList, setWeatherDataList] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
+  const [avgTemps, setAvgTemps] = useState([]);
 
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -42,6 +45,21 @@ const App = () => {
           `http://localhost:3000/api/weather/forecast?lat=${lat}&lon=${lon}&unit=${units}`
         );
         const forecastData = await forecastResponse.json();
+        const dailyTemps = {};
+
+        forecastData.list.forEach((item) => {
+          const date = new Date(item.dt * 1000).toLocaleDateString();
+          dailyTemps[date] = (dailyTemps[date] || []).concat(item.main.temp);
+        });
+
+        const avgTempsData = Object.keys(dailyTemps).map((date) => ({
+          date,
+          avgTemp:
+            dailyTemps[date].reduce((acc, temp) => acc + temp, 0) /
+            dailyTemps[date].length,
+        }));
+
+        setAvgTemps(avgTempsData);
 
         const totalTemp = forecastData.list.reduce(
           (acc, item) => acc + item.main.temp,
@@ -193,17 +211,31 @@ const App = () => {
   };
 
   const handleSetAlert = (alertData) => {
+    const threshold = parseFloat(alertData.threshold);
+
+    if (isNaN(threshold)) {
+      toast.error("Please enter a valid temperature threshold.");
+      return;
+    }
+
+    const updatedAlertData = {
+      ...alertData,
+      threshold,
+    };
+
     fetch("http://localhost:3000/api/weather/alerts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(alertData),
+      body: JSON.stringify(updatedAlertData),
     })
       .then((response) => {
         if (!response.ok) {
           return response.json().then((errorData) => {
-            const errorMessages = errorData.errors.map((err) => err.message).join(", ");
+            const errorMessages = errorData.errors
+              .map((err) => err.message)
+              .join(", ");
             throw new Error(errorMessages);
           });
         }
@@ -225,52 +257,60 @@ const App = () => {
         toast.error(errorMessage);
       });
   };
-  
+
   return (
-    <div className="mx-auto py-5 px-32 bg-gradient-to-br">
-      <TopButton setQuery={setQuery} />
-      <Input
-        query={query}
-        setUnits={setUnits}
-        setQuery={setQuery}
-        addWeatherDataToDb={handleAddWeatherData}
-        fetchWeatherDataFromDb={fetchWeatherDataFromDb}
-      />
-      <motion.button
-        whileHover={{ scale: 1.2 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ type: "spring", stiffness: 400, damping: 17 }}
-        className=" text-white font-bold py-2 px-4 border border-slate-300 rounded-xl"
-        onClick={() => setShowAlertModal(true)}
-      >
-        Set Alert
-      </motion.button>
-      {weather ? (
-        <>
-          <TimeAndLocation weather={weather} />
-          <TempAndDetails weather={weather} units={units} />
-          {forecast ? (
-            <Forecast title="3 hour step forecast" data={forecast} />
-          ) : (
-            <p>Loading forecast...</p>
-          )}
-        </>
-      ) : (
-        <p className="flex items-center justify-center m-80">Loading data...</p>
-      )}
-      <ToastContainer autoClose={1000} hideProgressBar={true} theme="dark" />
-      <WeatherPopup
-        handleDeleteWeatherData={handleDeleteWeatherData}
-        weatherDataList={weatherDataList}
-        showPopup={showPopup}
-        setShowPopup={setShowPopup}
-      />
-      <AlertModal
-        isOpen={showAlertModal}
-        onClose={() => setShowAlertModal(false)}
-        onSubmit={handleSetAlert}
-      />
-    </div>
+    <>
+      <div className="mx-auto py-5 px-32 bg-gradient-to-br">
+        <TopButton setQuery={setQuery} />
+        <Input
+          query={query}
+          setUnits={setUnits}
+          setQuery={setQuery}
+          addWeatherDataToDb={handleAddWeatherData}
+          fetchWeatherDataFromDb={fetchWeatherDataFromDb}
+        />
+        <motion.button
+          whileHover={{ scale: 1.2 }}
+          whileTap={{ scale: 0.9 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className=" text-white font-bold py-2 px-4 border border-slate-300 rounded-xl"
+          onClick={() => setShowAlertModal(true)}
+        >
+          Set Alert
+        </motion.button>
+        {weather ? (
+          <>
+            <TimeAndLocation weather={weather} />
+            <TempAndDetails weather={weather} units={units} />
+            {forecast ? (
+              <>
+                <Forecast title="3 hour step forecast" data={forecast} />
+              </>
+            ) : (
+              <p>Loading forecast...</p>
+            )}
+          </>
+        ) : (
+          <p className="flex items-center justify-center m-80">
+            Loading data...
+          </p>
+        )}
+        {avgTemps.length > 0 && <TemperatureLineChart data={avgTemps} />}
+        <ToastContainer autoClose={1000} hideProgressBar={true} theme="dark" />
+        <WeatherPopup
+          handleDeleteWeatherData={handleDeleteWeatherData}
+          weatherDataList={weatherDataList}
+          showPopup={showPopup}
+          setShowPopup={setShowPopup}
+        />
+        <AlertModal
+          isOpen={showAlertModal}
+          onClose={() => setShowAlertModal(false)}
+          onSubmit={handleSetAlert}
+        />
+      </div>
+      <Footer />
+    </>
   );
 };
 
