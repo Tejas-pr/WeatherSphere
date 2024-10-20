@@ -19,7 +19,6 @@ const App = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [showAlertModal, setShowAlertModal] = useState(false);
 
-
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
@@ -38,43 +37,43 @@ const App = () => {
       const data = await response.json();
       const { lat, lon } = data;
 
-      try{
+      try {
         const forecastResponse = await fetch(
           `http://localhost:3000/api/weather/forecast?lat=${lat}&lon=${lon}&unit=${units}`
         );
         const forecastData = await forecastResponse.json();
-  
+
         const totalTemp = forecastData.list.reduce(
           (acc, item) => acc + item.main.temp,
           0
         );
         const avgTemp = totalTemp / forecastData.list.length;
-  
+
         const totalHumidity = forecastData.list.reduce(
           (acc, item) => acc + item.main.humidity,
           0
         );
         const avgHumidity = totalHumidity / forecastData.list.length;
-  
+
         const totalWindSpeed = forecastData.list.reduce(
           (acc, item) => acc + item.wind.speed,
           0
         );
         const avgWindSpeed = totalWindSpeed / forecastData.list.length;
-  
+
         const weatherConditions = forecastData.list.map(
           (item) => item.weather[0].main
         );
         const conditionCounts = {};
-  
+
         weatherConditions.forEach((condition) => {
           conditionCounts[condition] = (conditionCounts[condition] || 0) + 1;
         });
-  
+
         const dominantCondition = Object.keys(conditionCounts).reduce((a, b) =>
           conditionCounts[a] > conditionCounts[b] ? a : b
         );
-  
+
         setWeather({
           ...data,
           avgTemp,
@@ -83,7 +82,7 @@ const App = () => {
           dominantCondition,
         });
         setForecast(forecastData.list);
-      }catch(error){
+      } catch (error) {
         toast.error(`Please re-load to fetch forcast data}`);
       }
     } catch (error) {
@@ -129,20 +128,20 @@ const App = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to add weather data");
+        console.log(errorData.error || "Failed to add weather data");
       }
 
       const result = await response.json();
       toast.success("Weather data added successfully!");
     } catch (error) {
-      toast.error(`Error in adding weather data`);
+      toast.error(`Limit exceeded: Delete a summary to add more.`);
     }
   };
 
   const deleteWeatherData = async (id) => {
     try {
       console.log(id);
-      
+
       const response = await fetch(
         `http://localhost:3000/api/weather/delete/${id}`,
         {
@@ -201,16 +200,32 @@ const App = () => {
       },
       body: JSON.stringify(alertData),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            const errorMessages = errorData.errors.map((err) => err.message).join(", ");
+            throw new Error(errorMessages);
+          });
+        }
+        return response.json();
+      })
       .then((data) => {
         toast.success("Alert set successfully!");
         toast.success("Please wait for email notification.");
       })
       .catch((error) => {
-        toast.error(`Try again !!`);
+        let errorMessage = error.message || "Try again !!";
+        if (errorMessage.includes("email")) {
+          errorMessage = "Please enter a valid email.";
+        } else if (errorMessage.includes("city")) {
+          errorMessage = "Please enter a valid city.";
+        } else if (errorMessage.includes("threshold")) {
+          errorMessage = "Please enter a valid temperature threshold.";
+        }
+        toast.error(errorMessage);
       });
   };
-
+  
   return (
     <div className="mx-auto py-5 px-32 bg-gradient-to-br">
       <TopButton setQuery={setQuery} />

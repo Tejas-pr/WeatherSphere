@@ -96,7 +96,7 @@ const formatForecastWeather = (secs, offset, data) => {
   return { hourly };
 };
 
-const getForcastWeatherData = async (city, unit) => {
+const getForecastWeatherData = async (city, unit) => {
   const weatherData = await fetchWeatherData(city, unit);
 
   const {
@@ -118,8 +118,7 @@ const getForcastWeatherData = async (city, unit) => {
 const simulateWeatherDataForMetros = async (city, unit) => {
   try {
     const data = await fetchWeatherData(city, unit);
-    const formattedWeather = formatCurrentWeather(data);
-    return formattedWeather;
+    return formatCurrentWeather(data);
   } catch (error) {
     console.log("Please reload the page!", error);
   }
@@ -131,9 +130,6 @@ const saveWeatherData = async (city, unit) => {
     const formattedWeather = formatCurrentWeather(data);
 
     const {
-      temp_max,
-      temp_min,
-      humidity,
       lat,
       lon,
       dt,
@@ -142,6 +138,14 @@ const saveWeatherData = async (city, unit) => {
       weather,
     } = formattedWeather;
 
+    const forecastData = await fetchForecastWeatherData(lat, lon, unit); 
+
+    const totalTemp = forecastData.list.reduce(
+      (acc, item) => acc + item.main.temp,
+      0
+    );
+    const avgTemp = totalTemp / forecastData.list.length;
+
     const weatherSummary = {
       city: cityName,
       country: country,
@@ -149,12 +153,12 @@ const saveWeatherData = async (city, unit) => {
       lon: lon,
       date: new Date(dt * 1000).toISOString().split("T")[0],
       summary: {
-        avg_temp: (temp_max + temp_min) / 2,
-        max_temp: temp_max,
-        min_temp: temp_min,
-        avg_humidity: humidity,
+        avg_temp: avgTemp,
+        max_temp: Math.max(...forecastData.list.map(item => item.main.temp)),
+        min_temp: Math.min(...forecastData.list.map(item => item.main.temp)),
+        avg_humidity: forecastData.list.reduce((acc, item) => acc + item.main.humidity, 0) / forecastData.list.length,
         dominant_condition: weather[0].main,
-        icon: `http://openweathermap.org/img/wn/${weather[0].icon}@2x.png`,
+        icon: iconUrlFromCode(weather[0].icon),
       },
     };
 
@@ -220,38 +224,28 @@ const checkAlerts = async () => {
                   <a href="https://www.instagram.com/tejas_p_r/profilecard/?igsh=MWs5Y3kxenptYXIxdA==" target="_blank" style="display:inline-block;">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" style="width:30px; height:30px;" />
                   </a>
-                  <a href="https://x.com/tejas67061437" target="_blank" style="display:inline-block;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/X_logo_2023_original.svg" alt="Twitter" style="width:30px; height:30px;" />
-                  </a>
                 </div>
               </div>
             `;
 
-            await sendEmail(
-              email,
-              `Weather Alert for ${city}`,
-              "Your threshold temperature is reached:",
-              message
-            );
-
+            await sendEmail(email, `Weather Alert for ${city}`, "Weather Alert", message);
             lastAlertTime[alertKey] = now;
+
             await Alert.deleteOne({ _id });
           }
         }
       } catch (error) {
-        console.error("Error fetching weather data for alert:", error);
+        console.error(`Error fetching weather data for ${city}:`, error);
       }
     }
   } catch (error) {
-    console.error("Error fetching alerts from database:", error);
+    console.error("Error checking alerts:", error);
   }
 };
 
-setInterval(checkAlerts, 60000);
-
 module.exports = {
   simulateWeatherDataForMetros,
+  getForecastWeatherData,
   saveWeatherData,
-  getForcastWeatherData,
-  sendEmail,
+  checkAlerts,
 };

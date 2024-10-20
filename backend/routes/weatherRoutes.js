@@ -1,4 +1,5 @@
 const express = require("express");
+const { z } = require("zod");
 const {
   simulateWeatherDataForMetros,
   saveWeatherData,
@@ -65,13 +66,21 @@ router.post("/add", async (req, res) => {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  const weatherData = new Weather(req.body);
   try {
+    const count = await Weather.countDocuments({});
+
+    if (count >= 10) {
+      return res
+        .status(400)
+        .json({ error: "Limit reached: Cannot add more than 10 entries." });
+    }
+
+    const weatherData = new Weather(req.body);
     await weatherData.save();
     res.status(201).json({ message: "Weather data saved successfully." });
   } catch (error) {
-    console.error(`Error saving weather data: ${error.message}`);
-    res.status(500).json({ error: "Failed to save weather data" });
+    console.error(`Error processing weather data: ${error.message}`);
+    res.status(500).json({ error: "Failed to process weather data" });
   }
 });
 
@@ -112,12 +121,27 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
+const alertSchema = z.object({
+  email: z.string().email("Invalid email format"),
+  city: z.string().min(1, "City is required"),
+  threshold: z.number().min(0, "Threshold must be a positive number"),
+});
+
 router.post("/alerts", async (req, res) => {
   const { email, city, threshold } = req.body;
 
+  const validation = alertSchema.safeParse({ email, city, threshold });
+
+  if (!validation.success) {
+    return res.status(400).json({
+      message: "Validation failed",
+      errors: validation.error.errors,
+    });
+  }
+
   try {
     const alert = new Alert({ email, city, threshold });
-    await alert.save(); // Save the alert to the database
+    await alert.save();
     res.json({ message: "Alert set successfully" });
   } catch (error) {
     console.error("Error setting alert:", error);

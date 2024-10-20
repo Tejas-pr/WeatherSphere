@@ -32,20 +32,26 @@ Develop a real-time data processing system to monitor weather conditions and pro
   - Specific weather conditions (e.g., alerts for storms or rain).
 
 - **Email Notifications**:  
-  Receive real-time **email notifications** when any of your weather thresholds are triggered. Stay informed wherever you are.
-
-<!-- - **Data Visualizations**:  
-  Visualize weather trends and insights with graphical representations:
-
-  - **Daily Weather Summaries**
-  - **Historical Weather Trends** (track changes over days, weeks, or months). -->
+  Receive real-time **email notifications** when any of your weather thresholds are triggered. Stay informed wherever you are.  
+  We've optimized the alert-setting process using **Zod** for validation, ensuring that your input is correct and reliable.
 
 - **Extended Weather Metrics**:  
   In addition to temperature, the system also supports monitoring and displaying other weather parameters, such as:
+
   - **Humidity**
   - **Wind Speed**
   - **Precipitation**
   - **Visibility**
+
+- **DB Optimization: Entry Limitation Feature:**
+
+  1. **Prevent Traffic Congestion**: Limits the number of entries to 10 per user to avoid database overload and reduce traffic bottlenecks.
+  2. **Ensure Data Integrity**: Restricts excessive or redundant entries, keeping the data clean and relevant.
+  3. **Boost Performance**: Helps maintain faster query responses and optimized read/write operations for a smoother experience.
+  4. **Enhance Resource Management**: Limits entry volume to manage storage efficiently and improve scalability.
+  5. **Ensure System Scalability**: This optimization supports system performance and responsiveness as the user base grows.  
+     supported
+     referenced [documentation](https://www.mongodb.com/docs/manual/reference/method/db.collection.countDocuments/?tck=mongodb_ai_chatbot) to implement this functionality.
 
 ## Pre-requisites
 
@@ -65,6 +71,7 @@ Develop a real-time data processing system to monitor weather conditions and pro
 [Axios](https://axios-http.com/docs/intro)
 [Cors](https://www.npmjs.com/package/cors)
 [Nodemailer](https://www.npmjs.com/package/nodemailer)
+[Zod](https://www.npmjs.com/package/zod)
 
 ## Design Choices
 
@@ -148,18 +155,21 @@ You can manually test the API endpoints using Postman by following these steps:
 Here are some example test cases to guide your manual testing:
 
 1. **Get Current Weather Data**
+
    - **Method**: GET
    - **Endpoint**: `http://localhost:3000/api/weather?city=Bengaluru&unit=metric`
    - **Description**: Fetches current weather data for Bengaluru.
    - **Expected Response**: 200 OK with the current weather data in JSON format.
 
 2. **Get Daily Weather Forecast**
+
    - **Method**: GET
    - **Endpoint**: `http://localhost:3000/api/weather/forecast?lat=12.9716&lon=77.5946&unit=metric`
    - **Description**: Retrieves the daily weather forecast for Bengaluru based on latitude and longitude.
    - **Expected Response**: 200 OK with the forecast data in JSON format.
 
 3. **Add Weather Data**
+
    - **Method**: POST
    - **Endpoint**: `http://localhost:3000/api/weather/add`
    - **Body** (JSON):
@@ -185,18 +195,21 @@ Here are some example test cases to guide your manual testing:
    - **Expected Response**: 201 Created, with a message confirming the data has been saved.
 
 4. **Fetch Weather Data**
+
    - **Method**: GET
    - **Endpoint**: `http://localhost:3000/api/weather/fetch`
    - **Description**: Retrieves all saved weather data.
    - **Expected Response**: 200 OK with an array of weather data in JSON format.
 
 5. **Simulate Weather Data**
+
    - **Method**: GET
    - **Endpoint**: `http://localhost:3000/api/weather/simulate?city=Bengaluru&unit=metric`
    - **Description**: Starts the simulation of weather data for London.
    - **Expected Response**: 200 OK with a message indicating that simulation has started.
 
 6. **Delete Weather Data**
+
    - **Method**: DELETE
    - **Endpoint**: `http://localhost:3000/api/weather/delete/:id`
    - **Description**: Deletes weather data by the specified ID. Replace `:id` with the actual ID of the weather data in DB to delete.
@@ -218,12 +231,6 @@ Here are some example test cases to guide your manual testing:
 
 ### Steps to Proceed:
 
-1. Ensure your backend server is running.
-2. Set the required environment variables in Postman.
-3. Execute the test cases above and verify that the responses match the expected outcomes.
-
-### Steps to Proceed:
-
 1. Backend Setup: Start your backend server, making sure that all dependencies are installed and the correct port is configured in Postman.
 2. Database Configuration: Ensure your MongoDB connection is set up and replace the :id parameter in the delete route with the corresponding \_id from your MongoDB database.
 3. Environment Variables: You need to create a .env file (based on .env.example) and set the following environment variables:
@@ -239,6 +246,7 @@ Here are some example test cases to guide your manual testing:
 - Vercel link for the frontend (to be added later). -->
 
 ##
-[Problem-Statement](./frontend/Problem_statement.md)    
+
+[Problem-Statement](./frontend/Problem_statement.md)  
 Thank You! 👋  
-tejas.teju02@gmail.com  
+tejas.teju02@gmail.com

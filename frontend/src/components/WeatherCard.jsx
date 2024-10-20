@@ -19,32 +19,43 @@ const WeatherPopup = ({
           delay: 0.5,
           ease: [0, 0.71, 0.2, 1.01],
         }}
-        className="fixed top-0 left-0 w-full h-full flex items-center justify-center text-black bg-black bg-opacity-50 gap-36"
+        className="fixed top-0 left-0 w-full h-full flex items-center justify-center text-black bg-black bg-opacity-50"
       >
-        <div className="flex items-start">
-          <motion.button
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.9 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
-            onClick={() => setShowPopup(false)}
-          >
-            Close
-          </motion.button>
-        </div>
-        <div className="bg-white p-5 rounded-lg shadow-lg max-w-md max-h-3/4 overflow-y-auto">
+        {/* Fixed close button */}
+        <motion.button
+          whileHover={{ scale: 1.2 }}
+          whileTap={{ scale: 0.9 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          className="fixed top-4 right-4 text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 z-10"
+          onClick={() => setShowPopup(false)}
+        >
+          Close
+        </motion.button>
+
+        <div className="bg-white p-5 rounded-lg shadow-lg max-w-4xl max-h-3/4 overflow-y-auto w-full">
           <h2 className="text-2xl mb-4">Saved Weather Data</h2>
 
-          <ul>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1">
             {weatherDataList.map((data, index) => (
-              <li key={index} className="border-b border-gray-300 py-2">
-                <h3>
+              <div
+                key={index}
+                className="border p-1 rounded-lg shadow-sm w-full max-w-[200px]"
+              >
+                <h3 className="font-bold mb-2">
                   {data.city}, {data.country}
                 </h3>
-                <p>Average Temperature: {data.summary.avg_temp} °C</p>
-                <p>Average Humidity: {data.summary.avg_humidity} %</p>
-                <p>Average Wind Speed: {data.summary.avg_wind_speed} m/s</p>
-                <p>Dominant Condition: {data.summary.dominant_condition}</p>
+                <p>
+                  Avg Temperature:<b> {data.summary.avg_temp} °C</b>
+                </p>
+                <p>
+                  Avg Humidity:<b>{data.summary.avg_humidity}</b> %
+                </p>
+                <p>
+                  Avg Wind Speed: <b>{data.summary.avg_wind_speed}</b> m/s
+                </p>
+                <p>
+                  Avg Condition: <b>{data.summary.dominant_condition}</b>
+                </p>
                 <p>
                   Date:{" "}
                   {new Date(data.date).toLocaleString(undefined, {
@@ -62,13 +73,13 @@ const WeatherPopup = ({
                   whileTap={{ scale: 0.9 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   onClick={() => handleDeleteWeatherData(data._id)}
-                  className="px-4 text-white bg-red-600 rounded-full"
+                  className="px-4 py-2 mt-2 text-white bg-red-600 rounded-full"
                 >
                   Delete
                 </motion.button>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </motion.div>
     </>
