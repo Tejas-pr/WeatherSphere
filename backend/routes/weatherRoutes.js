@@ -22,23 +22,15 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/forecast", async (req, res) => {
-  const { lat, lon, unit } = req.query;
+  const { city, unit } = req.query;
 
-  if (!lat || !lon || !unit) {
+  if (!city || !unit) {
     return res.status(400).json({ error: "Missing required query parameters" });
   }
 
   try {
-    const forecastResponse = await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${unit}&appid=${process.env.WEATHER_API_KEY}`
-    );
-
-    if (!forecastResponse.ok) {
-      throw new Error("Failed to fetch forecast data");
-    }
-
-    const forecastData = await forecastResponse.json();
-    res.json(forecastData);
+    const forecast_Data = await getForecastWeatherData(city, unit);
+    res.json(forecast_Data);
   } catch (error) {
     console.error("Error fetching forecast data:", error.message);
     res.status(500).json({ error: "Error fetching forecast data" });

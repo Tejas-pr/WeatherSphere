@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import logo from '../../public/icon.png'
+import logo from '../../src/assets/icon.png';
 
 const TopButton = ({ setQuery }) => {
   const cities = [

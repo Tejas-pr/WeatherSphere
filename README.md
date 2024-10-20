@@ -169,7 +169,7 @@ Here are some example test cases to guide your manual testing:
 2. **Get Daily Weather Forecast**
 
    - **Method**: GET
-   - **Endpoint**: `http://localhost:3000/api/weather/forecast?lat=12.9716&lon=77.5946&unit=metric`
+   - **Endpoint**: `http://localhost:3000/api/weather/forecast/?city=Bengaluru&unit=metric`
    - **Description**: Retrieves the daily weather forecast for Bengaluru based on latitude and longitude.
    - **Expected Response**: 200 OK with the forecast data in JSON format.
 
@@ -250,8 +250,9 @@ Here are some example test cases to guide your manual testing:
 - Docker setup instructions (if applicable).
 - Vercel link for the frontend (to be added later). -->
 
-##
-
-[Problem-Statement](./frontend/Problem_statement.md)  
+## DEMO
+- [Problem-Statement](./frontend/Problem_statement.md)  
+- [Video-demo-link](https://www.loom.com/share/821930449369464c912a2d5579aecad6?sid=ac29d21b-a0e4-4e45-a54c-244ed00aca3d)  
+#
 Thank You! 👋  
 tejas.teju02@gmail.com

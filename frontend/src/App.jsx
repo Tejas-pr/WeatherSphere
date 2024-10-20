@@ -32,7 +32,9 @@ const App = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather?city=${cityName}&unit=${units}`
+        `${
+          import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+        }/api/weather?city=${cityName}&unit=${units}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -42,9 +44,13 @@ const App = () => {
 
       try {
         const forecastResponse = await fetch(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/forecast?lat=${lat}&lon=${lon}&unit=${units}`
+          `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${
+            import.meta.env.VITE_OPENWEATHERMAP_API_KEY
+          }`
         );
         const forecastData = await forecastResponse.json();
+        console.log(forecastData);
+
         const dailyTemps = {};
 
         forecastData.list.forEach((item) => {
@@ -62,7 +68,7 @@ const App = () => {
         setAvgTemps(avgTempsData);
 
         const totalTemp = forecastData.list.reduce(
-          (acc, item) => acc + item.main.temp,
+          (acc, item) => acc + convertTemperature(item.main.temp, units),
           0
         );
         const avgTemp = totalTemp / forecastData.list.length;
@@ -99,17 +105,35 @@ const App = () => {
           avgWindSpeed,
           dominantCondition,
         });
-        setForecast(forecastData.list);
+        setForecast(
+          forecastData.list.map((item) => ({
+            ...item,
+            main: {
+              ...item.main,
+              temp: convertTemperature(item.main.temp, units),
+            },
+          }))
+        );
       } catch (error) {
-        toast.error(`Please re-load to fetch forcast data}`);
+        toast.error(`Please re-load to fetch forecast data`);
       }
     } catch (error) {
       toast.error(`Please re-load to fetch weather data`);
     }
   };
 
+  const convertTemperature = (temp, units) => {
+    if (units === "metric") {
+      return temp - 273.15;
+    } else if (units === "imperial") {
+      return ((temp - 273.15) * 9) / 5 + 32;
+    } else {
+      return temp;
+    }
+  };
+
   useEffect(() => {
-    const intervalId = setInterval(getWeather, 300000);
+    const intervalId = setInterval(getWeather, 300000); // 5 minutes
     return () => clearInterval(intervalId);
   }, [query, units]);
 
@@ -136,13 +160,16 @@ const App = () => {
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(weatherData),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(weatherData),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -161,7 +188,9 @@ const App = () => {
       console.log(id);
 
       const response = await fetch(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/delete/${id}`,
+        `${
+          import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+        }/api/weather/delete/${id}`,
         {
           method: "DELETE",
         }
@@ -185,7 +214,9 @@ const App = () => {
 
   const fetchWeatherDataFromDb = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/fetch`);
+      const response = await fetch(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/fetch`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch weather data.");
       }
@@ -223,13 +254,16 @@ const App = () => {
       threshold,
     };
 
-    fetch(`${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/alerts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedAlertData),
-    })
+    fetch(
+      `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather/alerts`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedAlertData),
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           return response.json().then((errorData) => {

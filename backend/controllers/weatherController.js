@@ -23,21 +23,25 @@ const checkAlerts = async () => {
 
       try {
         const response = await fetch(
-          `${process.env.VITE_REACT_APP_BACKEND_BASEURL}/api/weather?city=${city}`
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${process.env.OPENWEATHERMAP_API_KEY}`
         );
         const weatherData = await response.json();
+
+        const {
+          main: { temp: currentTempCelsius },
+          name: cityName,
+        } = weatherData;
+
         const now = Date.now();
         const alertKey = `${city}-${threshold}`;
         const lastSent = lastAlertTime[alertKey];
 
         if (!lastSent || now - lastSent > 3600000) {
-          const currentTempCelsius = (weatherData.temp - 273.15).toFixed(2);
-
           if (currentTempCelsius > threshold) {
             const message = `
               <div style="background-color:#000; color:#fff; padding:20px; border-radius:10px; font-family:Arial, sans-serif; text-align:center;">
-                <h1 style="font-size:28px; color:#ffcc00;">⚠️ Weather Alert for ${city} ⚠️</h1>
-                <p style="font-size:18px; margin-top:10px;">The temperature in <strong>${city}</strong> has <span style="color:#ff6347;">exceeded</span> your set threshold!</p>
+                <h1 style="font-size:28px; color:#ffcc00;">⚠️ Weather Alert for ${cityName} ⚠️</h1>
+                <p style="font-size:18px; margin-top:10px;">The temperature in <strong>${cityName}</strong> has <span style="color:#ff6347;">exceeded</span> your set threshold!</p>
                 
                 <div style="margin:20px 0;">
                   <p style="font-size:24px;">🌡️ <strong>Current Temperature:</strong> ${currentTempCelsius}°C</p>
@@ -67,7 +71,12 @@ const checkAlerts = async () => {
               </div>
             `;
 
-            await sendEmail(email, `Weather Alert for ${city}`, "Weather Alert", message);
+            await sendEmail(
+              email,
+              `Weather Alert for ${cityName}`,
+              "Weather Alert",
+              message
+            );
             lastAlertTime[alertKey] = now;
 
             await Alert.deleteOne({ _id });
@@ -90,7 +99,7 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_PASSKEY,
-  },  
+  },
 });
 
 const sendEmail = async (to, subject, text, htmlContent) => {
@@ -175,16 +184,11 @@ const formatForecastWeather = (secs, offset, data) => {
 const getForecastWeatherData = async (city, unit) => {
   const weatherData = await fetchWeatherData(city, unit);
 
-  const {
-    coord: { lat, lon },
-    timezone,
-  } = weatherData;
-
   const forecastData = await fetchForecastWeatherData(city, unit);
 
   const formattedForecast = formatForecastWeather(
     weatherData.dt,
-    timezone,
+    (timezone = 0),
     forecastData.list
   );
 
@@ -205,16 +209,9 @@ const saveWeatherData = async (city, unit) => {
     const data = await fetchWeatherData(city, unit);
     const formattedWeather = formatCurrentWeather(data);
 
-    const {
-      lat,
-      lon,
-      dt,
-      name: cityName,
-      country,
-      weather,
-    } = formattedWeather;
+    const { lat, lon, dt, name: cityName, country, weather } = formattedWeather;
 
-    const forecastData = await fetchForecastWeatherData(lat, lon, unit); 
+    const forecastData = await fetchForecastWeatherData(lat, lon, unit);
 
     const totalTemp = forecastData.list.reduce(
       (acc, item) => acc + item.main.temp,
@@ -230,9 +227,11 @@ const saveWeatherData = async (city, unit) => {
       date: new Date(dt * 1000).toISOString().split("T")[0],
       summary: {
         avg_temp: avgTemp,
-        max_temp: Math.max(...forecastData.list.map(item => item.main.temp)),
-        min_temp: Math.min(...forecastData.list.map(item => item.main.temp)),
-        avg_humidity: forecastData.list.reduce((acc, item) => acc + item.main.humidity, 0) / forecastData.list.length,
+        max_temp: Math.max(...forecastData.list.map((item) => item.main.temp)),
+        min_temp: Math.min(...forecastData.list.map((item) => item.main.temp)),
+        avg_humidity:
+          forecastData.list.reduce((acc, item) => acc + item.main.humidity, 0) /
+          forecastData.list.length,
         dominant_condition: weather[0].main,
         icon: iconUrlFromCode(weather[0].icon),
       },
@@ -243,7 +242,6 @@ const saveWeatherData = async (city, unit) => {
     console.error(`Error saving weather data:`, error);
   }
 };
-
 
 module.exports = {
   simulateWeatherDataForMetros,
