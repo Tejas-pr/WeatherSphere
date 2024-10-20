@@ -8,10 +8,10 @@ const weatherRoutes = require("./routes/weatherRoutes");
 dotenv.config();
 
 app.use(cors({
-  origin: "*", 
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true, 
-  optionsSuccessStatus: 204,
+  origin: process.env.allowed_origin,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
