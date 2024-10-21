@@ -49,7 +49,6 @@ const App = () => {
           }`
         );
         const forecastData = await forecastResponse.json();
-        console.log(forecastData);
 
         const dailyTemps = {};
 

@@ -4,10 +4,11 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const weatherRoutes = require("./routes/weatherRoutes");
-const cors = require("cors");
+dotenv.config();
 
-app.use(cors());
-
+app.use(cors({
+  origin: process.env.VITE_FRONTEND_URL
+}));
 app.use(express.json());
 
 mongoose
