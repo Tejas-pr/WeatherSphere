@@ -254,11 +254,6 @@ Here are some example test cases to guide your manual testing:
 - Docker setup instructions (if applicable).
 - Vercel link for the frontend (to be added later). -->
 
-## DEMO
-
-- [Problem-Statement](./frontend/Problem_statement.md)
-
-#
-
+##
 Thank You! 👋  
 tejas.teju02@gmail.com
