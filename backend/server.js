@@ -6,9 +6,7 @@ const dotenv = require("dotenv");
 const weatherRoutes = require("./routes/weatherRoutes");
 dotenv.config();
 
-app.use(cors({
-  origin: process.env.VITE_FRONTEND_URL
-}));
+app.use(cors());
 app.use(express.json());
 
 mongoose
