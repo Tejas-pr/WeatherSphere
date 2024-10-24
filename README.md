@@ -4,7 +4,7 @@ Develop a real-time data processing system to monitor weather conditions and pro
 
 The system retrieves data from the OpenWeatherMap API, utilizing data retrieved from the OpenWeatherMap API. The system calculates daily weather summaries, including average, maximum, and minimum temperatures, as well as identifies the dominant weather condition based on frequency of occurrence. User-configurable alerting thresholds were implemented to monitor temperature, triggering alerts for violations and enabling effective monitoring. The system retrieves weather data at configurable intervals, accurately parses responses, and includes temperature conversion functionalities. Additionally, I extended the system to support other weather parameters such as humidity and wind speed, and integrated functionalities for weather forecasts, enhancing the overall capability and depth of insights provided. Comprehensive test cases were developed to ensure the functionality, correctness, and efficiency of the system across various weather scenarios.  
 
-[DEPLOYED LINK](https://vercel.com/api/toolbar/link/weather-sphere-frontend.vercel.app?via=project-dashboard-alias-list&p=1&page=/)  
+[DEPLOYED LINK](https://weather-sphere-frontend-b9ctv4f8x-tejas-projects-cc2e2c44.vercel.app/?vercelToolbarCode=SkqDF57cktYXxFk)   
 [DEMO VIDEO](https://www.loom.com/share/821930449369464c912a2d5579aecad6?sid=ac29d21b-a0e4-4e45-a54c-244ed00aca3d)
 
 ## Features
